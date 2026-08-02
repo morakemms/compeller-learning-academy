@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compeller Learning Academy — Training Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#0B1220;
+  --ink-2:#111B30;
+  --panel:#152140;
+  --panel-2:#1B2A4D;
+  --line: rgba(148,168,214,0.16);
+  --line-strong: rgba(148,168,214,0.28);
+  --text:#E7ECF7;
+  --text-dim:#9BAAC7;
+  --text-faint:#6C7CA0;
+  --amber:#F5B942;
+  --amber-dim: rgba(245,185,66,0.14);
+  --teal:#3FDDC0;
+  --teal-dim: rgba(63,221,192,0.14);
+  --coral:#FF6B6B;
+  --w1:#3FDDC0;
+  --w2:#F5B942;
+  --w3:#FF8FB1;
+  --w4:#8C9EFF;
+  --w5:#FF6B6B;
+  --radius: 14px;
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--font-body);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--amber); color:#1a1200;}
+
+/* ---------- Layout shell ---------- */
+.app{
+  display:grid;
+  grid-template-columns: 300px 1fr;
+  min-height:100vh;
+}
+@media (max-width: 900px){
+  .app{grid-template-columns: 1fr;}
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background: linear-gradient(180deg, var(--ink-2), var(--ink) 60%);
+  border-right:1px solid var(--line);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  padding:22px 16px 40px;
+  z-index:40;
+}
+@media (max-width: 900px){
+  .sidebar{
+    position:fixed;
+    left:0; top:0;
+    width:82vw; max-width:340px;
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+    box-shadow:20px 0 60px rgba(0,0,0,0.5);
+  }
+  .sidebar.open{transform:translateX(0);}
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  padding:6px 8px 18px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:14px;
+}
+.brand-mark{
+  width:38px; height:38px; border-radius:10px;
+  background: conic-gradient(from 220deg, var(--teal), var(--amber), var(--coral), var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  flex:none;
+  position:relative;
+}
+.brand-mark::after{
+  content:"";
+  position:absolute; inset:3px;
+  border-radius:7px;
+  background:var(--ink-2);
+}
+.brand-mark svg{position:relative; z-index:1; width:20px; height:20px;}
+.brand-text{font-family:var(--font-display); line-height:1.15;}
+.brand-text .b1{font-size:13px; font-weight:700; letter-spacing:.02em;}
+.brand-text .b2{font-size:10.5px; color:var(--text-dim); font-family:var(--font-mono); letter-spacing:.04em;}
+
+.progress-wrap{margin:2px 8px 18px; padding:12px 12px 13px; background:var(--panel); border:1px solid var(--line); border-radius:12px;}
+.progress-label{display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-bottom:8px;}
+.progress-label b{color:var(--amber); font-weight:600;}
+.progress-track{height:6px; border-radius:6px; background:rgba(255,255,255,0.06); overflow:hidden;}
+.progress-fill{height:100%; background:linear-gradient(90deg, var(--teal), var(--amber)); border-radius:6px; transition:width .4s ease; width:0%;}
+
+nav.navtree{padding:0 4px;}
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:9px;
+  color:var(--text-dim); text-decoration:none;
+  font-size:13.5px; font-weight:500;
+  cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.nav-item:hover{background:var(--panel); color:var(--text);}
+.nav-item.active{background:var(--panel-2); color:var(--text);}
+.nav-item .ic{width:16px; text-align:center; flex:none; opacity:.85;}
+
+.nav-section-title{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-faint);
+  padding:16px 10px 6px;
+}
+
+.week-group{margin-bottom:2px;}
+.week-head{
+  display:flex; align-items:center; gap:10px;
+  padding:10px; border-radius:9px; cursor:pointer;
+  color:var(--text); font-weight:600; font-size:13.5px;
+  font-family:var(--font-display);
+}
+.week-head:hover{background:var(--panel);}
+.week-dot{width:9px;height:9px;border-radius:50%;flex:none; box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
+.week-num{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-left:auto;}
+.week-chevron{transition:transform .2s ease; opacity:.6; font-size:10px;}
+.week-group.open .week-chevron{transform:rotate(90deg);}
+.week-days{
+  max-height:0; overflow:hidden; transition:max-height .25s ease;
+  padding-left:19px; border-left:1px solid var(--line); margin-left:19px;
+}
+.week-group.open .week-days{max-height:900px;}
+.day-link{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; margin:1px 0; border-radius:7px;
+  color:var(--text-dim); text-decoration:none; font-size:12.8px;
+  cursor:pointer;
+}
+.day-link:hover{background:var(--panel); color:var(--text);}
+.day-link.active{background:var(--panel-2); color:var(--amber);}
+.day-check{
+  width:14px; height:14px; border-radius:4px; flex:none;
+  border:1.4px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center;
+}
+.day-check.done{background:var(--teal); border-color:var(--teal);}
+.day-check.done::after{content:"✓"; font-size:9px; color:#06231d; font-weight:700;}
+.day-num{font-family:var(--font-mono); color:var(--text-faint); font-size:11px; width:16px; flex:none;}
+
+/* ---------- Mobile top bar ---------- */
+.topbar{
+  display:none;
+  position:sticky; top:0; z-index:30;
+  background:rgba(11,18,32,0.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:12px 16px; align-items:center; gap:12px;
+}
+@media (max-width:900px){.topbar{display:flex;}}
+.hamburger{
+  width:34px; height:34px; border-radius:8px; background:var(--panel);
+  border:1px solid var(--line); color:var(--text); display:flex;
+  align-items:center; justify-content:center; cursor:pointer; flex:none;
+}
+.topbar .brand-text .b1{font-size:12.5px;}
+.overlay{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:35;
+}
+.overlay.show{display:block;}
+
+/* ---------- Main content ---------- */
+main{padding:48px 56px 100px; max-width:920px;}
+@media (max-width:900px){ main{padding:28px 20px 80px;} }
+
+.eyebrow{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.eyebrow .sep{color:var(--text-faint);}
+h1.page-title{
+  font-family:var(--font-display); font-weight:700; font-size:38px;
+  line-height:1.12; margin:0 0 14px; letter-spacing:-.01em;
+}
+@media (max-width:600px){ h1.page-title{font-size:28px;} }
+.lede{font-size:16.5px; color:var(--text-dim); max-width:66ch; margin:0 0 30px;}
+
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 26px;
+}
+.section-gap{margin-top:34px;}
+
+/* Home hero */
+.hero{
+  position:relative; border-radius:20px; overflow:hidden;
+  background: radial-gradient(120% 140% at 15% 0%, #1c2c52 0%, #101a30 55%, #0b1220 100%);
+  border:1px solid var(--line);
+  padding:46px 40px;
+  margin-bottom:8px;
+}
+@media (max-width:600px){.hero{padding:30px 22px;}}
+.hero-tag{font-family:var(--font-mono); font-size:12px; color:var(--amber); letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px;}
+.hero h1{font-family:var(--font-display); font-size:44px; line-height:1.08; margin:0 0 16px; max-width:14ch; letter-spacing:-.015em;}
+@media (max-width:600px){.hero h1{font-size:30px;}}
+.hero p{font-size:16px; color:var(--text-dim); max-width:58ch; margin:0 0 26px;}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px 28px; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); margin-bottom:26px;}
+.hero-meta b{color:var(--text); font-weight:600;}
+.hero-cta{
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--amber); color:#241900; font-weight:700; font-family:var(--font-display);
+  padding:13px 22px; border-radius:10px; text-decoration:none; font-size:14.5px;
+  cursor:pointer; border:none;
+  box-shadow:0 8px 24px rgba(245,185,66,0.18);
+}
+.hero-cta:hover{filter:brightness(1.06);}
+
+.trace{
+  position:absolute; right:-40px; top:-40px; width:340px; height:340px; opacity:.5;
+  pointer-events:none;
+}
+
+/* Stat grid */
+.stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:34px 0;}
+@media (max-width:750px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px 18px;}
+.stat .n{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--amber);}
+.stat .l{font-size:12px; color:var(--text-dim); margin-top:4px;}
+
+h2.h{font-family:var(--font-display); font-size:22px; font-weight:600; margin:0 0 16px; display:flex; align-items:center; gap:10px;}
+h2.h .h-ic{color:var(--teal);}
+
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:750px){.two-col{grid-template-columns:1fr;}}
+
+ul.plain{list-style:none; margin:0; padding:0;}
+ul.plain li{
+  position:relative; padding:8px 0 8px 24px; font-size:14.5px; color:var(--text); border-bottom:1px solid var(--line);
+}
+ul.plain li:last-child{border-bottom:none;}
+ul.plain li::before{content:"→"; position:absolute; left:0; color:var(--teal); font-family:var(--font-mono);}
+
+table.sched{width:100%; border-collapse:collapse; margin-top:10px;}
+table.sched th{
+  text-align:left; font-family:var(--font-mono); font-size:11px; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--text-faint); padding:8px 12px; border-bottom:1px solid var(--line-strong);
+}
+table.sched td{padding:14px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:top;}
+table.sched td.wk{font-family:var(--font-display); font-weight:700; color:var(--amber); white-space:nowrap;}
+table.sched tr:last-child td{border-bottom:none;}
+
+/* Week page */
+.week-banner{
+  border-radius:16px; padding:34px 36px; margin-bottom:30px; border:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.week-banner .wk-eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; opacity:.9; margin-bottom:10px;}
+.week-banner h1{font-family:var(--font-display); font-size:32px; margin:0 0 12px;}
+.week-banner p{max-width:64ch; opacity:.92; font-size:15px; margin:0;}
+
+.day-grid{display:grid; grid-template-columns:1fr; gap:14px;}
+.day-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  cursor:pointer; text-decoration:none; color:inherit; display:block;
+  transition:border-color .15s, transform .15s;
+}
+.day-card:hover{border-color:var(--line-strong); transform:translateY(-1px);}
+.day-card-top{display:flex; align-items:center; gap:12px; margin-bottom:8px;}
+.day-badge{
+  font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink);
+  background:var(--amber); padding:4px 9px; border-radius:6px; flex:none;
+}
+.day-card h3{font-family:var(--font-display); font-size:17px; margin:0; font-weight:600;}
+.day-card .desc{color:var(--text-dim); font-size:13.5px; margin:0;}
+.day-card-meta{display:flex; gap:14px; margin-top:12px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+
+/* Day page */
+.day-hero{
+  border-radius:16px; padding:32px 34px; margin-bottom:28px; border:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.day-hero .wk-eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; opacity:.85; margin-bottom:12px;}
+.day-hero h1{font-family:var(--font-display); font-size:30px; margin:0 0 8px;}
+@media (max-width:600px){.day-hero h1{font-size:23px;}}
+.day-hero .dur{font-family:var(--font-mono); font-size:12px; opacity:.85;}
+
+.complete-toggle{
+  display:inline-flex; align-items:center; gap:10px; margin-top:20px;
+  background:rgba(0,0,0,0.18); border:1px solid rgba(255,255,255,0.22);
+  padding:10px 16px; border-radius:10px; cursor:pointer; font-size:13.5px; font-weight:600;
+  color:inherit;
+}
+.complete-toggle .box{width:18px; height:18px; border-radius:5px; border:1.6px solid currentColor; display:flex; align-items:center; justify-content:center; flex:none;}
+.complete-toggle.done .box{background:currentColor;}
+.complete-toggle.done .box::after{content:"✓"; font-size:11px;}
+
+.obj-list{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+.obj-list li{
+  display:flex; gap:12px; align-items:flex-start; font-size:14.5px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+}
+.obj-list li .n{
+  font-family:var(--font-mono); font-size:11px; color:var(--ink); background:var(--teal);
+  width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; font-weight:700;
+}
+
+.topic-tags{display:flex; flex-wrap:wrap; gap:9px;}
+.topic-tag{
+  background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+  padding:9px 13px; border-radius:9px; font-size:13.5px; line-height:1.4;
+}
+
+.activity-card{border-radius:12px; padding:20px 22px; border:1px solid var(--line);}
+.activity-card .tag{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; display:inline-block; padding:3px 9px; border-radius:6px;}
+.activity-card p{margin:0; font-size:14.5px;}
+.activity-card.act{background:var(--teal-dim); border-color:rgba(63,221,192,0.3);}
+.activity-card.act .tag{background:var(--teal); color:#06231d;}
+.activity-card.prac{background:var(--amber-dim); border-color:rgba(245,185,66,0.3);}
+.activity-card.prac .tag{background:var(--amber); color:#241900;}
+
+details.slides{
+  background:var(--ink-2); border:1px solid var(--line); border-radius:12px; padding:4px 18px; margin-bottom:10px;
+}
+details.slides summary{
+  cursor:pointer; padding:14px 0; font-family:var(--font-display); font-weight:600; font-size:14.5px;
+  list-style:none; display:flex; align-items:center; gap:10px;
+}
+details.slides summary::-webkit-details-marker{display:none;}
+details.slides summary::before{content:"▸"; color:var(--teal); transition:transform .15s; flex:none;}
+details.slides[open] summary::before{transform:rotate(90deg);}
+details.slides p{color:var(--text-dim); font-size:13.8px; padding-bottom:16px; margin:0;}
+
+.day-nav{display:flex; justify-content:space-between; gap:14px; margin-top:38px; padding-top:24px; border-top:1px solid var(--line);}
+.day-nav a{
+  flex:1; text-decoration:none; color:var(--text); border:1px solid var(--line); border-radius:12px;
+  padding:14px 16px; font-size:13px; display:block;
+}
+.day-nav a:hover{border-color:var(--line-strong); background:var(--panel);}
+.day-nav a .lbl{font-family:var(--font-mono); color:var(--text-faint); font-size:10.5px; text-transform:uppercase; margin-bottom:4px;}
+.day-nav a.next{text-align:right;}
+
+/* Appendix pages */
+.glossary-search{
+  width:100%; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  padding:12px 16px; color:var(--text); font-size:14px; font-family:var(--font-body); margin-bottom:20px;
+}
+.glossary-search:focus{outline:none; border-color:var(--teal);}
+.gloss-item{padding:16px 0; border-bottom:1px solid var(--line);}
+.gloss-item dt{font-family:var(--font-display); font-weight:600; font-size:15.5px; color:var(--amber); margin-bottom:4px;}
+.gloss-item dd{margin:0; color:var(--text-dim); font-size:14px;}
+
+.shortcut-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+@media (max-width:600px){.shortcut-grid{grid-template-columns:1fr;}}
+.shortcut{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+}
+.kbd{font-family:var(--font-mono); font-size:12.5px; background:var(--panel-2); border:1px solid var(--line-strong); border-bottom-width:2px; padding:4px 9px; border-radius:6px; color:var(--teal);}
+.shortcut .what{font-size:13.5px; color:var(--text-dim); text-align:right;}
+
+.test-week{margin-bottom:26px;}
+.test-week h3{font-family:var(--font-display); font-size:16px; color:var(--w1); margin:0 0 10px;}
+.test-week ol{margin:0; padding-left:20px;}
+.test-week li{padding:6px 0; font-size:14.5px; color:var(--text);}
+
+.checklist{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+.checklist li{
+  display:flex; gap:12px; align-items:flex-start; background:var(--ink-2); border:1px solid var(--line);
+  border-radius:10px; padding:13px 15px; cursor:pointer; font-size:14.5px;
+}
+.checklist .cbox{width:19px; height:19px; border-radius:5px; border:1.6px solid var(--line-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center;}
+.checklist li.done .cbox{background:var(--teal); border-color:var(--teal);}
+.checklist li.done .cbox::after{content:"✓"; font-size:11px; color:#06231d; font-weight:700;}
+.checklist li.done span.txt{color:var(--text-dim); text-decoration:line-through;}
+
+footer.pagefoot{margin-top:60px; padding-top:24px; border-top:1px solid var(--line); color:var(--text-faint); font-size:12.5px; font-family:var(--font-mono);}
+
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.pill{font-family:var(--font-mono); font-size:11px; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong); color:var(--text-dim);}
+
+a.plain-link{color:var(--teal);}
+
+/* ---------- Auth / login gate ---------- */
+#auth-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:
+    radial-gradient(120% 100% at 20% 0%, #1c2c52 0%, #101a30 45%, #0b1220 100%);
+}
+.auth-card{
+  width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line);
+  border-radius:18px; padding:36px 32px; box-shadow:0 30px 80px rgba(0,0,0,0.4);
+}
+.auth-brand{display:flex; align-items:center; gap:12px; margin-bottom:26px;}
+.auth-brand .brand-mark{width:42px;height:42px;}
+.auth-brand .brand-mark svg{width:22px;height:22px;}
+.auth-title{font-family:var(--font-display); font-weight:700; font-size:21px; margin:0 0 6px;}
+.auth-sub{color:var(--text-dim); font-size:13.5px; margin:0 0 24px;}
+.auth-field{margin-bottom:16px;}
+.auth-field label{display:block; font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); margin-bottom:7px;}
+.auth-field input{
+  width:100%; background:var(--ink-2); border:1px solid var(--line-strong); border-radius:9px;
+  padding:12px 14px; color:var(--text); font-size:14.5px; font-family:var(--font-body);
+}
+.auth-field input:focus{outline:none; border-color:var(--teal);}
+.auth-submit{
+  width:100%; background:var(--amber); color:#241900; font-weight:700; font-family:var(--font-display);
+  border:none; padding:13px; border-radius:10px; font-size:14.5px; cursor:pointer; margin-top:4px;
+}
+.auth-submit:hover{filter:brightness(1.06);}
+.auth-submit:disabled{opacity:.6; cursor:default;}
+.auth-error{
+  background:rgba(255,107,107,0.12); border:1px solid rgba(255,107,107,0.35); color:#ffb3b3;
+  font-size:13px; padding:10px 13px; border-radius:8px; margin-bottom:16px; display:none;
+}
+.auth-error.show{display:block;}
+.auth-footnote{color:var(--text-faint); font-size:12px; margin-top:20px; text-align:center;}
+
+#app-shell{display:none;}
+#app-shell.show{display:block;}
+
+.sidebar-user{
+  display:flex; align-items:center; gap:9px; padding:10px; margin:0 8px 14px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px;
+}
+.sidebar-user .avatar{
+  width:28px; height:28px; border-radius:50%; background:var(--teal-dim); color:var(--teal);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display);
+  font-weight:700; font-size:12px; flex:none;
+}
+.sidebar-user .uname{font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.sidebar-user .logout-btn{
+  margin-left:auto; background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:11px;
+  font-family:var(--font-mono); flex:none;
+}
+.sidebar-user .logout-btn:hover{color:var(--coral);}
+
+</style>
+</head>
+<body>
+
+<!-- ===== Login gate ===== -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="2" stroke="#0B1220" stroke-width="1.6"/><path d="M8 20h8M12 16v4" stroke="#0B1220" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text"><div class="b1">Compeller Learning Academy</div><div class="b2">TRAINING MANUAL</div></div>
+    </div>
+    <h1 class="auth-title">Sign in</h1>
+    <p class="auth-sub">Use the username and password your instructor gave you.</p>
+    <div class="auth-error" id="auth-error"></div>
+    <form id="auth-form">
+      <div class="auth-field">
+        <label for="auth-username">Username</label>
+        <input id="auth-username" type="text" autocomplete="username" required>
+      </div>
+      <div class="auth-field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="auth-submit" id="auth-submit" type="submit">Sign in</button>
+    </form>
+    <p class="auth-footnote">Forgot your password? Ask your instructor to reset it.</p>
+  </div>
+</div>
+
+<!-- ===== App (hidden until signed in) ===== -->
+<div id="app-shell">
+
+<div class="overlay" id="overlay"></div>
+
+<div class="topbar">
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <div class="brand-text"><div class="b1">Compeller Learning Academy</div><div class="b2">TRAINING MANUAL</div></div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="2" stroke="#0B1220" stroke-width="1.6"/><path d="M8 20h8M12 16v4" stroke="#0B1220" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="b1">Compeller Learning Academy</div>
+        <div class="b2">TRAINING MANUAL</div>
+      </div>
+    </div>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="avatar" id="sidebar-avatar">?</div>
+      <div class="uname" id="sidebar-uname"></div>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Your progress</span><b id="progress-pct">0%</b></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <nav class="navtree" id="navtree"></nav>
+
+    <div class="nav-section-title">Reference</div>
+    <a class="nav-item" data-route="appendix-glossary"><span class="ic">▤</span> Glossary</a>
+    <a class="nav-item" data-route="appendix-shortcuts"><span class="ic">⌨</span> Keyboard Shortcuts</a>
+    <a class="nav-item" data-route="appendix-selftest"><span class="ic">?</span> Self-Test Questions</a>
+    <a class="nav-item" data-route="appendix-checklist"><span class="ic">☑</span> Capstone Checklist</a>
+  </aside>
+
+  <main id="main"></main>
+</div>
+
+</div><!-- /#app-shell -->
+
+<script id="site-data" type="application/json">{"front": {"welcome": "Welcome to your 5-week computer training programme! This handbook is yours to keep \u2014 bring it to every session, use it to follow along, and take it home to revise. Over the next five weeks you'll go from the very basics of using a computer to practical skills in Microsoft Office, Graphics Design, Databases, Artificial Intelligence, and Cybersecurity.\n\nEach day in this handbook lists: what you'll be able to do by the end of the session, the topics your instructor will cover, the in-class activity you'll complete, and anything to practice before the next session. Tick the checkbox at the end of each day once you feel confident with that day's skills \u2014 if you can't tick it yet, that's completely normal; ask your instructor for extra practice.", "achieve": ["Real, everyday confidence using a computer \u2014 not just theory.", "A personal portfolio of real work: a CV, a budget spreadsheet, a flyer and logo, a small database, and an AI-assisted document.", "Practical knowledge of AI tools that are useful right now.", "The skills to keep your accounts, devices, and data safe online."], "bring": ["This handbook and a notebook/pen.", "Your login details for any accounts you create (write these down somewhere safe, never inside this handbook).", "A willingness to practice \u2014 you learn computing by doing, not by watching."], "assess_intro": "Assessment is practical, not just written:", "assess_items": ["Daily in-class activities (informal, observed) \u2014 40%", "Weekly review sessions (end of Weeks 1\u20134) \u2014 30%", "Final Capstone Project & Presentation (Day 25) \u2014 30%"], "assess_cert": "A Certificate of Completion is awarded to students who complete the programme and the final capstone project.", "schedule": [["1", "Computer Basics & Fundamentals", "Hardware, operating systems, file management, typing, internet & email"], ["2", "Microsoft Office Suite", "Word, Excel, PowerPoint \u2014 core productivity skills"], ["3", "Graphics Design", "Design principles, Canva, CorelDRAW/Photoshop basics, branding project"], ["4", "Database Management & Introduction to AI", "MS Access fundamentals; practical AI tools and prompting"], ["5", "Cybersecurity & Capstone", "Online safety, threat awareness, review, final assessment & project"]]}, "weeks": [{"number": 1, "title": "Computer Basics & Fundamentals", "intro": "This week builds the foundation every other module depends on. Because the class is mixed-level, By the end of this week you'll be comfortable using a computer independently.", "days": [{"number": 1, "title": "Meet the Computer", "objectives": ["Identify the main hardware components of a desktop/laptop (CPU, monitor, keyboard, mouse, storage devices)", "Distinguish between hardware and software", "Power a computer on/off correctly and understand the desktop environment"], "topics": ["What is a computer? Input, process, output, storage", "Types of computers: desktop, laptop, tablet, smartphone", "Hardware tour: CPU/tower, monitor, keyboard, mouse, ports, cables", "Software vs hardware; operating system vs applications", "Safe power-on/shutdown procedure; avoiding hardware damage"], "activity": "Hands-on labelling: label a printed diagram of a computer, then point out each part on the real machine in front of you.", "practice": "Write down (in a notebook) five things at home or work that contain a computer chip (e.g., microwave, ATM, phone).", "slides": [{"title": "What Is a Computer?", "text": "A computer is a machine that takes information in, works on it, and gives a result back out. INPUT PROCESS OUTPUT STORAGE Data goes in (typing, clicking) The CPU acts on the data A result you see or hear Data is kept for later"}, {"title": "The Data Journey", "text": "Process: Step 2: Doing the Brainwork. Input: Step 1: Gathering the Raw Material. The computer receives raw data or commands from the outside world. This is the entry point for everything a computer does. Everyday Tools: Keyboards, mice, touchscreens, and microphones. The Central Processing Unit (CPU) takes that raw input and organizes, calculates, or changes it based on instructions from a program. This is where the computer \"thinks.\" Everyday Tools: The processor and system memory working together to run software. Storage: Step 4: Keeping It Safe. Output: Step 3: Delivering the Results. The computer saves the information so it doesn't disappear when the machine is turned off. This allows the user to find and open their work again later. Everyday Tools: Hard drives (SSD/HDD), USB flash drives, and memory cards. The computer translates the processed data back into a format that humans can understand and interact with. Everyday Tools: Monitors displaying video, speakers playing audio, and printers producing physical pages."}, {"title": "Types of Computers", "text": "Same basic idea (input \u2192 process \u2192 output \u2192 storage) \u2014 different shapes and uses. Desktop Laptop Tablet Smartphone Separate tower and monitor. Powerful and easy to upgrade; stays in one place. All-in-one and portable. Built-in screen, keyboard, and trackpad. Touchscreen, very portable. Great for browsing, reading, light tasks. Pocket-sized computer. Calls, apps, camera, and internet access."}, {"title": "Hardware Tour \u2014 The Essentials", "text": "Hardware = anything you can physically touch. CPU / Tower Monitor Keyboard Mouse The computer's \"brain.\" Carries out instructions and processes data. On a laptop, it's built in under the keyboard. The screen that displays output. Built into the lid on a laptop; a separate unit on a desktop. The main input device for typing text and commands. An input device for pointing, clicking, and navigating. A trackpad does this job on a laptop."}, {"title": "Hardware Tour \u2014 Storage, Ports & Cables", "text": "Storage Devices Ports & Cables Ports are the sockets on the case where cables plug in. USB \u2014 connects keyboards, mice, flash drives, printers. HDMI \u2014 connects the monitor/projector for video and sound. Power cable \u2014 always connect and remove it gently, never yank. Keep data saved even when the power is off. Internal hard drive / SSD \u2014 stores the operating system and everyday files. External options \u2014 USB flash drives, external hard drives. Cloud storage \u2014 saving files online (e.g. Google Drive, OneDrive)."}, {"title": "Hardware vs. Software", "text": "Hardware is what you touch. Software is what you use. HARDWARE SOFTWARE Physical parts you can touch Monitor, keyboard, mouse, tower Wears out or breaks physically Example: a printer Instructions that tell hardware what to do Windows, MS Word, a web browser Invisible \u2014 lives on the storage device Example: a print driver program"}, {"title": "Operating System vs. Applications", "text": "Two layers of software work together on every computer. HARDWARE Operating System (OS) The master software that manages the computer and lets every other program run \u2014 e.g. Windows, macOS. Applications Individual programs you open to do a task \u2014 Word for documents, a browser for the internet, a game to play. Rule of thumb: only one Operating System runs a computer, but you can install and open many Applications. CPU, monitor, keyboard, storage OPERATING SYSTEM Windows \u2014 manages the hardware APPLICATIONS Word, browser, games \u2014 run on top of the OS"}, {"title": "Safe Power-On / Shutdown", "text": "Avoiding hardware damage starts with a correct routine. DO DON'T Press the power button once and wait for start-up to finish Always use \"Shut Down\" from the Start Menu when finished Save your work before shutting down Wait for the screen to fully turn off before unplugging Hold the power button to force it off (last resort only) Unplug the computer while it's still running Move a laptop while it's still saving/loading Spill liquids near the keyboard or vents"}, {"title": "Today's Recap", "text": "A computer works by input \u2192 process \u2192 output \u2192 storage Hardware is physical; software is the instructions it runs The CPU, monitor, keyboard, mouse, and storage are the essentials Always shut down properly to protect your hardware HANDS-ON ACTIVITY Label a printed diagram of a computer, then point out each part on the real machine in front of you. HOMEWORK Write down five things at home or work that contain a computer chip (e.g. microwave, ATM, phone)."}]}, {"number": 2, "title": "The Operating System & File Management", "objectives": ["Navigate the Windows desktop, Start Menu, and Taskbar confidently", "Create, rename, move, copy, and delete files and folders", "Understand the concept of a file path and file extensions"], "topics": ["Desktop, icons, Taskbar, Start Menu, Notification area", "Windows Explorer / File Explorer navigation", "Creating folders; organising files logically", "Copy, cut, paste, rename, delete, and Recycle Bin", "Common file extensions (.docx, .xlsx, .pdf, .jpg, .mp4) and what opens them"], "activity": "Create a personal folder structure: 'My Training' > subfolders for each week. Practice moving sample files into the correct subfolders.", "practice": "Organise the files/photos already on your phone or PC into at least two labelled folders.", "slides": [{"title": "The Desktop Environment", "text": "Five things to get comfortable with before touching files. Desktop Icons Taskbar Start Menu Notification Area The main screen \u2014 your workspace when nothing else is open. Shortcuts to programs or files, placed on the desktop. The bar at the bottom showing open programs. The gateway to every installed program. Clock, volume, Wi-Fi, and system alerts."}, {"title": "File Explorer Navigation", "text": "Think of File Explorer as your digital filing cabinet. This PC > Documents > Training Address bar Shows exactly where you are. Sidebar Quick shortcuts to common locations. Main area Shows the files and folders in the current location. Quick Access Desktop Week 1 Week 2 Documents Pictures This PC CV.docx Budget.xlsx"}, {"title": "Creating & Organising Folders", "text": "A folder is like a drawer; files are the documents inside it. My Training Good Folder Habits Week 1 Give folders clear, specific names \u2014 not \"New Folder (3)\" Use one main folder per subject, with sub-folders inside Keep related files together so they're easy to find later Right-click > New > Folder to create one anywhere Week 2 Week 3 Week 4 Week 5"}, {"title": "File Actions Toolkit", "text": "Six actions you'll use every single day. Copy Cut Paste Duplicate \u2014 the original stays put (Ctrl+C) Move \u2014 removed from here, placed elsewhere (Ctrl+X) Place a copied or cut item here (Ctrl+V) Rename Delete Recycle Bin Give a file or folder a new name (F2) Send to the Recycle Bin (Delete key) Restore a deleted file, or empty it for good"}, {"title": "Understanding File Paths", "text": "A file path is simply the \"full address\" of a file on your computer. C: Drive Users YourName Documents CV.docx C:\\Users\\YourName\\Documents\\CV.docx Just like a postal address gets a letter to the right house, a file path tells the computer exactly which drive, which folders, and which file you mean."}, {"title": "Common File Extensions", "text": "The letters after the dot tell you \u2014 and the computer \u2014 what kind of file it is. .docx .xlsx .pdf .jpg / .png .mp4 Microsoft Word Microsoft Excel PDF Reader Photo Viewer Media Player Text documents, letters, CVs Spreadsheets and calculations Fixed-layout documents for sharing/printing Pictures and images Video files"}, {"title": "Today's Recap", "text": "The Desktop, Taskbar, Start Menu, and Notification area make up your workspace File Explorer is your digital filing cabinet \u2014 sidebar, address bar, main area Copy, Cut, Paste, Rename, Delete, and the Recycle Bin cover everyday file tasks A file path is the full address of a file; the extension tells you its type HANDS-ON ACTIVITY Create a personal folder structure: 'My Training' > subfolders for each week. Practice moving sample files into the correct subfolders. BEFORE NEXT SESSION Organise the files/photos already on your phone or PC into at least two labelled folders."}]}, {"number": 3, "title": "Keyboard, Mouse & Typing Skills", "objectives": ["Use correct finger placement (home row) for typing", "Perform mouse actions accurately: click, double-click, right-click, drag-and-drop", "Type a short paragraph with reasonable speed and accuracy"], "topics": ["Keyboard layout: letters, numbers, function keys, special keys (Ctrl, Alt, Shift, Enter, Backspace, Space)", "Home row typing technique", "Mouse mechanics: single click, double-click, right-click menus, scroll wheel, drag-and-drop", "Common keyboard shortcuts: Ctrl+C, Ctrl+V, Ctrl+Z, Ctrl+S, Ctrl+P"], "activity": "Use a free typing tutor (e.g., TypingClub or Keybr, if internet available) for 20 minutes of guided practice, then a 5-minute timed typing test.", "practice": "Practice typing for 15 minutes using any typing tutor site or app.", "slides": [{"title": "Keyboard Layout Tour", "text": "Four zones make up almost every keyboard. Esc F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 Letters ` = Back Tab Q W E R T Y U I O P [ ] Numbers Caps A S D F G H J K L Enter Shift Z X C V B N M Shift Function keys Ctrl Alt Space Alt Ctrl Home row Special keys"}, {"title": "Home Row Typing Technique", "text": "Rest your fingers here, and every other key is just a short reach away. A S D F J K L ; Small bumps on F and J let you find home row without looking down. Rest fingertips lightly on A S D F and J K L ; Each finger returns to its home key after pressing another Keep wrists straight and relaxed, not bent upward or downward Practice without looking down \u2014 trust your fingers, check the screen"}, {"title": "Mouse Mechanics", "text": "Five actions cover almost everything you'll do with a mouse. Single Click Double-Click Right-Click Scroll Wheel Drag-and-Drop Select an item or press a button \u2014 one quick press. Two quick clicks \u2014 opens a file or program. Opens a context menu with options for that item. Roll to move up and down a page smoothly. Hold, move, and release to reposition an item."}, {"title": "Common Keyboard Shortcuts", "text": "These five work the same way in almost every Windows program. Ctrl + C Ctrl + V Ctrl + Z Ctrl + S Ctrl + P Copy Paste Undo Save Print"}, {"title": "Today's Recap", "text": "Rest fingers on the home row: A S D F and J K L ; Click, double-click, right-click, scroll, and drag-and-drop cover most mouse use Five shortcuts \u2014 Copy, Paste, Undo, Save, Print \u2014 work almost everywhere Accuracy first; speed builds naturally with practice HANDS-ON ACTIVITY Use a free typing tutor (e.g., TypingClub or Keybr) for 20 minutes of guided practice, then take a 5-minute timed typing test. BEFORE NEXT SESSION Practice typing for 15 minutes using any typing tutor site or app."}]}, {"number": 4, "title": "Internet & Email Fundamentals", "objectives": ["Open a browser and perform an effective web search", "Understand URLs, tabs, bookmarks, and downloads", "Create and use an email account (compose, send, attach, reply)"], "topics": ["What is the internet vs the World Wide Web vs a browser", "Using a search engine effectively (keywords, quotes for exact phrase)", "Browser basics: tabs, address bar, bookmarks, history, downloads", "Creating a Gmail/Outlook account", "Composing, sending, replying, forwarding, and attaching files to email", "Spotting an obviously suspicious email (preview of Week 5 cybersecurity)"], "activity": "Create a professional email address (firstname.lastname@gmail.com style) and send a test email to your instructor with a file attached.", "practice": "Send one email to a classmate and CC the instructor, practicing subject line and attachment.", "slides": [{"title": "Internet vs. World Wide Web vs. Browser", "text": "Three related things people often mix up. The Internet World Wide Web The Internet The global network of connected computers \u2014 the infrastructure everything runs on. The World Wide Web The collection of websites and pages you can visit \u2014 one of many services that run on the internet (email is another). A Browser The program you use to access the Web \u2014 Chrome, Edge, Firefox, Safari. Browser"}, {"title": "Searching Effectively", "text": "A search engine finds pages that match your words \u2014 it doesn't \"know\" answers on its own. \"best rice recipe\" Lagos Use quotation marks Be specific with keywords Check the source Wrap a phrase in quotes \u2014 \"best rice recipe\" \u2014 to search for that exact phrase. Add details like a location, date, or brand instead of one broad word. Prefer official, well-known sites over random or unfamiliar ones."}, {"title": "Browser Basics", "text": "Five features you'll use in every browsing session. Home Search Docs + www.example.com Tabs Address Bar Bookmarks History Downloads Open several pages at once in one window. Type or view the exact web address (URL). Save a page to revisit it instantly later. A list of pages you've visited recently. Files you've saved from the web to your device."}, {"title": "Creating an Email Account", "text": "Every account has a unique address \u2014 like a postal address for the digital world. firstname.lastname@gmail.com Gmail Outlook Free, widely used, works well with Google Docs, Sheets, and Drive. Free, integrates closely with Microsoft Word, Excel, and Teams. A professional address like firstname.lastname@provider.com makes a stronger impression than nicknames or numbers."}, {"title": "Composing & Sending Email", "text": "Five actions cover almost everything you'll do with email. Compose Send Reply Forward Attach Start a brand-new message. Deliver it to the recipient's inbox. Respond to the sender of a message. Pass a message on to someone else. Include a file alongside your message."}, {"title": "Spotting a Suspicious Email", "text": "A first look at phishing \u2014 we'll go much deeper in Week 5. URGENT: Verify Your Account Now!! Urgency and pressure \u2014 \"act now or lose access\" From: security-alert@bank-verify-now.info Dear Customer, Your account will be suspended in 24 hours unless you click below and confirm your password immediately. [ CLICK HERE TO VERIFY ] An unfamiliar or mismatched sender address Generic greeting \u2014 \"Dear Customer\" instead of your name A request to click a link and enter a password Poor spelling, grammar, or strange formatting"}, {"title": "Today's Recap", "text": "The Internet is the network; the Web is the content; a browser is your window into it Quotation marks and specific keywords make searches sharper Tabs, the address bar, bookmarks, history, and downloads are everyday browser tools Compose, Send, Reply, Forward, and Attach cover most of email Urgency, mismatched senders, and \"click here\" links are the first signs of phishing HANDS-ON ACTIVITY Create a professional email address (firstname.lastname@gmail.com style) and send a test email to your instructor with a file attached. BEFORE NEXT SESSION Send one email to a classmate and CC the instructor, practicing subject line and attachment."}]}, {"number": 5, "title": "Review, Practice & Assessment", "objectives": ["Consolidate Week 1 skills", "Demonstrate independent navigation of files, typing, and email"], "topics": ["Recap: hardware, OS navigation, file management, typing, internet & email", "Q&A / troubleshooting common mistakes from the week"], "activity": "Short practical quiz (10 questions) + a hands-on task: create a folder, type a one-paragraph email inside a Word doc, save it in the folder, then email it to the instructor as an attachment.", "practice": "None \u2014 but extra typing practice is encouraged for anyone still hunting-and-pecking.", "slides": [{"title": "Our Week 1 Progress Journey", "text": "Day 2: File Manager Day 4: Internet & Mail Navigating File Explorer, extension logic, and clean paths. Secure searches, professional email accounts, and file attachments. Day 1: Hardware Day 3: Typing Lab Anatomy of CPUs, input/output systems, and safe shutdown routines. Home row posture, shortcuts, and click mechanics."}, {"title": "Core Competency Milestones", "text": "Hardware & OS Shortcuts & Flow Digital Contacts Confidently managing physical parts and mastering directory paths inside Windows File Explorer. Resting on the home row naturally while deploying global commands such as Ctrl+C, Ctrl+V, and Ctrl+S. Drafting clean emails, selecting distinct subject lines, and safely attaching documents."}, {"title": "02. Troubleshooting Clinic", "text": "Highlighting common mouse, directory, and document transmission errors."}, {"title": "Overcoming Common Pitfalls", "text": "Double-Click Timing constraints: Maintain speed without physically shifting the mouse across the pad during intervals. Deeply Nested Folders: Limit folder hierarchies to three levels deep to prevent files from going missing. Accidental Deletions: Utilize `Ctrl + Z` to instantly undo mishaps. Access the Recycle Bin to recover lost items. Attachment Progress: Always verify the upload bar turns solid or green before pressing 'Send' in your browser."}, {"title": "The Milestone Assessment Brief", "text": "Task 1: Structure \u2014 Create an \"Assessment\" subfolder inside \"My Training\". Task 2: Content \u2014 Open MS Word, type a 1-paragraph summary of Week 1, and save as \"Week1_Review.docx\" inside the folder. Task 3: Dispatch \u2014 Compose a professional email, attach your file, and send it directly to the instructor."}, {"title": "Grade & Evaluation Blueprint", "text": "60% Continuous Evaluation Weight As detailed in the Computer_Training_Manual.docx assessment standard, adult skill-building relies on regular execution rather than exams: Overall Pass Mark Practical Activities: Interactive daily tasks (40%) Weekly Checks: Short consolidation check-ins (30%) Capstone Project: Final multi-system showcase (30%)"}, {"title": "Troubleshooting QA?", "text": "Complete your diagnostic task. The instructor is active to verify individual folders. WEEK 1 COMPLETE | PREVIEWING WEEK 2 MICROSOFT OFFICE"}, {"title": "Image Sources", "text": "http://googleusercontent.com/image_collection/image_retrieval/3415609492869094182_0 Source: Google Image Search"}, {"title": "Image Sources", "text": "https://www.memphislibrary.org/wp-content/uploads/Computer-Classes-PHOTO-MWright-1024x683.jpg Source: www.memphislibrary.org"}]}]}, {"number": 2, "title": "Microsoft Office Suite", "intro": "This is usually the most immediately useful week for job-seekers. Every lesson is task-based ('produce this exact document') so you leave with finished, reusable work samples for a portfolio.", "days": [{"number": 6, "title": "Microsoft Word I: Document Basics", "objectives": ["Create, format, save, and print a basic document", "Apply font formatting, alignment, and paragraph spacing", "Use spell-check and basic page layout settings"], "topics": ["The Word interface: Ribbon, Quick Access Toolbar, status bar", "Typing, selecting text, cut/copy/paste", "Font formatting: bold, italics, underline, size, colour, highlighting", "Paragraph alignment, line spacing, bullets & numbering", "Page layout: margins, orientation, page size", "Saving in .docx and .pdf; naming conventions"], "activity": "Type and format a one-page personal profile / introduction letter using at least five formatting features covered today.", "practice": "Type a simple CV draft (content only, formatting to be refined on Day 7).", "slides": [{"title": "The Word Interface", "text": "Three parts of the screen you'll use constantly. Quick Access Toolbar Home Insert Layout References Review View Page 1 of 1 | 124 words | English (US) \u2460 Quick Access Toolbar \u2014 your most-used commands, always visible \u2461 Ribbon \u2014 every command organised into tabs (Home, Insert, Layout...) \u2462 Status Bar \u2014 page count, word count, language"}, {"title": "Typing, Selecting & Cut/Copy/Paste", "text": "Select first, then act \u2014 this order matters in Word. abc Select Text Cut (Ctrl+X) Copy (Ctrl+C) Paste (Ctrl+V) Click and drag, double-click a word, or triple-click a paragraph. Ctrl+A selects everything. Removes the selected text and holds it, ready to place elsewhere. Duplicates the selected text \u2014 the original stays in place. Places the cut or copied text at your cursor's position."}, {"title": "Font Formatting", "text": "Changes how text looks, without changing the words. Bold Italic Underline Colour Highlight Strong Emphasis Important Custom Stand out"}, {"title": "Paragraph Alignment & Lists", "text": "Left Center Right Justify Bulleted List Numbered List + Line Spacing First item Second item Third item Step one Step two Step three Line spacing controls the gap between lines \u2014 1.0, 1.5, or 2.0 are common choices."}, {"title": "Page Layout", "text": "Set these before you finish typing to avoid reflowing your content. Three Settings to Know Margins The blank space around the edge of the page \u2014 default is usually 1 inch. Orientation Portrait (tall) for letters and CVs; Landscape (wide) for wide tables or charts. Page Size A4 is standard outside the US; Letter is standard within the US. Landscape Portrait"}, {"title": "Saving Your Work", "text": "Save early, save often \u2014 and save in the right format. .docx .pdf Editable Word format Use while still writing or formatting Anyone with Word (or similar) can open and edit it Fixed, final layout Use for sharing or printing the finished version Looks identical on any device Naming convention tip: FirstName_LastName_CV.docx \u2014 clear, specific, no \"Document1\" or \"final_final_v2\"."}, {"title": "Today's Recap", "text": "The Ribbon organises every command into tabs; the status bar shows page/word count Select text first, then Cut, Copy, or Paste it (Ctrl+X / C / V) Bold, Italic, Underline, Colour, and Highlight all format text without changing words Margins, orientation, and page size are set in Page Layout Save as .docx while editing, export to .pdf for the finished, shareable version HANDS-ON ACTIVITY Type a short one-paragraph biography of yourself, then format the title (bold, centred, larger size) and the body text (justified alignment, spell-checked), and save it as 'MyBio.docx'. BEFORE NEXT SESSION Type and format a one-page letter to a friend using at least four different formatting tools covered today."}]}, {"number": 7, "title": "Microsoft Word II: Tables, Styles & Mail Merge Basics", "objectives": ["Insert and format tables", "Apply built-in styles and headers/footers", "Understand the concept of mail merge for form letters"], "topics": ["Inserting/formatting tables: borders, shading, merging cells", "Headers, footers, and page numbers", "Styles (Heading 1/2, Normal) and why they matter for structure", "Inserting images, SmartArt basics", "Intro to Mail Merge: letter + Excel data source (conceptual demo)"], "activity": "Finalise your CV from Day 6 into a polished, table-based layout with a header containing your name and contact details.", "practice": "Print (or export to PDF) the finished CV; bring a copy for feedback.", "slides": [{"title": "Topics to Be Covered", "text": "Five hands-on areas, from table basics to mail merge Tables Headers & Footers Styles Images & SmartArt Mail Merge Borders, shading, merging cells Plus page numbers Heading 1/2, Normal \u2014 and why structure matters Visual elements, basics of SmartArt Letter + Excel data source (conceptual demo)"}, {"title": "Inserting & Formatting Tables", "text": "Borders: Control line weight, style, and color around cells and tables | Region | Q1 | Q2 | | North | $12.4K | $14.1K | | South | $9.8K | $11.0K | | Merged total row spans all columns | | | Shading: Apply background fill to highlight header rows or key data Merging cells: Combine adjacent cells for titles, spanning labels, or layout Try it: Insert tab \u2192 Table, then use Table Design and Layout tabs to format borders, shading, and merges."}, {"title": "Headers, Footers & Page Numbers", "text": "Document Title \u2014 Header Headers Repeat titles, chapter names, or logos at the top of every page Footers Show file names, dates, or confidentiality notices at the bottom Page numbers Insert automatic numbering (Insert \u2192 Page Number) with multiple formats Section breaks Use different headers/footers for cover pages vs. body content Footer \u2022 Page 1"}, {"title": "Styles: Heading 1/2 & Normal", "text": "Why styles matter Heading 1 Creates a navigable, jump-to structure via the Navigation Pane Heading 2 Enables automatic Table of Contents generation Normal style is used for body paragraphs like this one \u2014 consistent font, size, and spacing throughout the document. Keeps formatting consistent across long documents Makes global formatting changes easy \u2014 update the style, not each instance Navigation Pane Heading 1 \u2014 Chapter One Heading 2 \u2014 Section 1.1 Heading 2 \u2014 Section 1.2 Heading 1 \u2014 Chapter Two"}, {"title": "Inserting Images & SmartArt Basics", "text": "Images SmartArt Basics Insert from file, stock images, or online sources Insert tab \u2192 SmartArt for diagrams: lists, processes, cycles, hierarchies Wrap text around, behind, or in front of images Turns bullet text into a visual diagram automatically Resize, crop, and apply picture styles/borders Great for org charts, timelines, and process flows Compress images to keep file size manageable Colors and layout update with the document theme"}, {"title": "Intro to Mail Merge (Conceptual Demo)", "text": "Combine one letter template with a data source to generate personalized copies Word Letter Excel Data Source Personalized Letters + Template with placeholders like \u00abFirstName\u00bb, \u00abAddress\u00bb Spreadsheet rows: one recipient per row (Name, Address, etc.) One finished letter per row \u2014 merged and ready to print or send The Process Start Mail Merge \u2192 choose Letters (Mailings tab) Select Recipients \u2192 connect to the Excel data source Insert Merge Fields \u2192 place placeholders in the letter Preview Results \u2192 check a few merged records Finish & Merge \u2192 generate individual documents"}, {"title": "Recap", "text": "Tables can be formatted with borders, shading, and merged cells Headers, footers, and page numbers keep documents consistent Built-in styles (Heading 1/2, Normal) create structure and navigation Images and SmartArt add visual clarity to documents Mail merge combines a letter template with an Excel data source to produce personalized letters Next: hands-on practice in Microsoft Word"}]}, {"number": 8, "title": "Microsoft Excel I: Spreadsheet Basics & Formulas", "objectives": ["Navigate rows, columns, and cells confidently", "Enter and format data", "Write basic formulas (addition, subtraction, SUM, AVERAGE)"], "topics": ["The Excel interface: cells, rows, columns, sheets, cell references (A1 style)", "Entering text, numbers, and dates; AutoFill/drag-fill", "Basic formulas: =A1+A2, SUM(), AVERAGE(), MIN(), MAX()", "Formatting cells: currency, percentage, borders, colour fills", "Freeze panes; sorting a simple list"], "activity": "Build a simple household or small-business monthly budget spreadsheet using SUM and AVERAGE.", "practice": "Add two more months of sample data to the budget sheet and recompute totals.", "slides": [{"title": "Topics to be Covered", "text": "The Excel interface: cells, rows, columns, sheets, cell references (A1 style) Entering text, numbers, and dates; AutoFill / drag-fill Basic formulas: =A1+A2, SUM(), AVERAGE(), MIN(), MAX() Formatting cells: currency, percentage, borders, colour fills Freeze panes; sorting a simple list"}, {"title": "Topic 1", "text": "The Excel Interface Cells A B C D E The individual boxes where you enter data \u2014 the basic building block of a sheet. Rows & columns Cell B3 Rows run horizontally (numbered); columns run vertically (lettered). Sheets Tabs at the bottom of the workbook, each holding its own grid of cells. Cell references (A1 style) Every cell is named by its column letter and row number, e.g. B3."}, {"title": "Topic 2", "text": "Entering Text, Numbers & Dates Text Numbers Labels, headings, and names. Left-aligned by default. Values used in calculations. Right-aligned by default. Dates AutoFill / drag-fill Recognised automatically when typed in a standard format. Drag the fill handle to copy a value or continue a series."}, {"title": "Topic 3", "text": "Basic Formulas =A1+A2 =A1-A2 =SUM(A1:A10) Adds the values in two cells Subtracts one cell's value from another Adds up a range of cells =AVERAGE(A1:A10) =MIN(A1:A10) =MAX(A1:A10) Calculates the mean of a range Finds the smallest value in a range Finds the largest value in a range"}, {"title": "Topic 4", "text": "Formatting Cells $1,250.00 42% Currency Percentage Displays numbers as monetary values Shows a value as a share of 100 \u25ad \u25a8 Borders Colour fills Outlines cells or ranges for clarity Shades cells to highlight or group data"}, {"title": "Topic 5", "text": "Freeze Panes & Sorting Freeze Panes Sorting a Simple List Keep header rows or columns visible while scrolling through a large sheet \u2014 so you always know what each column means. Arrange rows A-to-Z, Z-to-A, or smallest-to-largest based on the values in a chosen column. Before After Priya Amir Amir Liam Zoe Priya Liam Zoe"}, {"title": "Ready to Practice", "text": "Open a blank workbook and try navigating cells, entering a small data set, and writing a SUM or AVERAGE formula."}]}, {"number": 9, "title": "Microsoft Excel II: Functions, Charts & Data Tools", "objectives": ["Use IF, COUNTIF, and simple lookup functions", "Create and format a chart from data", "Sort and filter a data table"], "topics": ["Logical functions: IF() with a simple condition", "COUNTIF() and basic VLOOKUP concept (shown, not mastered)", "Creating charts: bar, line, pie; chart titles and labels", "Sort & Filter for organising records", "Page setup for printing a spreadsheet neatly"], "activity": "Using the Day 8 budget sheet, add an IF formula ('Over Budget' / 'On Track') and create a pie chart of expenses by category.", "practice": "Bring one real-life scenario (e.g., attendance list, sales record) you'd like to build into a spreadsheet.", "slides": [{"title": "The IF() Function \u2014 Anatomy", "text": "A formula that makes a decision and returns one of two results. =IF( B2 > 50000 , \"Over Budget\" , \"On Track\" ) B2 > 50000 \"Over Budget\" \"On Track\" The Condition If TRUE If FALSE What Excel checks \u2014 true or false. Shown when the condition is met. Shown when the condition is not met."}, {"title": "Building an IF() Formula", "text": "STEP 1 OF 1 Follow along in your own sheet: fx =IF(B2>50000,\"Over Budget\",\"On Track\") Click the empty cell where the result should appear (C2). A B C Expense Amount Status Type =IF( to begin the formula. Rent 65,000 ? Click cell B2, then type >50000 for the condition. Data 12,000 Type ,\"Over Budget\", then ,\"On Track\" for the two outcomes. Food 30,000 Close the bracket with ) and press Enter. Drag the fill handle down to copy the formula to other rows."}, {"title": "The COUNTIF() Function", "text": "Counts how many cells in a range match a condition. =COUNTIF( C2:C10 , \"Over Budget\" ) C Range C2:C10 \u2014 the group of cells to look through. Criteria \"Over Budget\" \u2014 the exact value to count. Result 3 \u2014 the formula found three matching cells in the example on the left. Status Over Budget On Track Over Budget On Track Over Budget"}, {"title": "VLOOKUP \u2014 The Basic Idea", "text": "A quick look at the concept \u2014 full mastery isn't expected yet. =VLOOKUP( lookup value , table range , column number , FALSE ) A B Think of it like looking up a name in a phone book by number. Search for \"S002\" in column A Excel finds the matching row It returns the value from column B on that same row \u2014 \"Tunde\" Student ID Name S001 Amaka S002 Tunde S003 Chidi"}, {"title": "Creating a Chart", "text": "Four steps take you from a table of numbers to a clear visual. Select Your Data Insert > Chart Pick a Chart Type Add Titles & Labels Highlight the cells \u2014 include the header row so labels appear automatically. Go to the Insert tab and choose Chart from the ribbon. Choose Bar, Line, or Pie depending on what you want to show. Click the chart, then add a title and axis labels so it explains itself."}, {"title": "Choosing the Right Chart Type", "text": "Bar Chart Line Chart Pie Chart Best for comparing amounts across categories (e.g. expenses by item). Best for showing a trend over time (e.g. spending each month). Best for showing how parts make up a whole (e.g. % of total budget)."}, {"title": "Sort & Filter", "text": "Sorting rearranges rows; filtering temporarily hides the ones you don't need. Sort \u2014 Step by Step Filter \u2014 Step by Step 1. Click any cell inside your data table 2. Go to Data > Sort 3. Choose the column to sort by 4. Choose A\u2013Z or Z\u2013A (or smallest to largest) 5. Click OK \u2014 rows rearrange automatically 1. Click any cell inside your data table 2. Go to Data > Filter \u2014 small arrows appear on headers 3. Click the arrow on the column you want to filter 4. Untick the values you want to hide (or set a condition) 5. Click OK \u2014 only matching rows stay visible"}, {"title": "Page Setup for Printing", "text": "A spreadsheet that looks fine on-screen can print messily without these steps. Set the Print Area Choose Orientation Scale to Fit Preview Before Printing Select the exact cells to print, then Page Layout > Print Area > Set. Landscape suits wide tables; Portrait suits narrow, tall lists. Use \"Fit to 1 page wide\" so columns don't split across pages. Always check Print Preview to catch cut-off columns early."}, {"title": "Today's Recap", "text": "IF() checks a condition and returns one of two results COUNTIF() counts matching cells in a range VLOOKUP finds a value and returns matching data from another column Bar, Line, and Pie charts each suit a different kind of story Sort rearranges rows; Filter temporarily hides rows Set print area, orientation, and scaling before printing a sheet HANDS-ON ACTIVITY Using the Day 8 budget sheet, add an IF formula ('Over Budget' / 'On Track') and create a pie chart of expenses by category. BEFORE NEXT SESSION Bring one real-life scenario (e.g., attendance list, sales record) you'd like to build into a spreadsheet."}]}, {"number": 10, "title": "Microsoft PowerPoint: Presentation Design", "objectives": ["Build a multi-slide presentation with consistent design", "Use layouts, transitions, and basic animations appropriately", "Deliver a short presentation confidently"], "topics": ["Slide layouts, themes, and the slide master (brief)", "Adding text, images, icons, and SmartArt", "Transitions vs animations \u2014 using them sparingly", "Presenter view and rehearsing timing", "Design do's and don'ts (text-heavy slides, tiny fonts, clashing colours)"], "activity": "Create a 5-slide presentation about yourself or a business idea and present it to the class in under 2 minutes.", "practice": "Refine the presentation using at least one image and one transition; save as .pptx and .pdf.", "slides": [{"title": "Layouts, Themes & the Slide Master", "text": "Three settings that control how every slide looks \u2014 set once, applied everywhere. Slide Layout Theme Slide Master The arrangement of placeholders on one slide \u2014 Title Slide, Title & Content, Two Content, etc. A matched set of colours, fonts, and effects applied across the whole deck at once. The master template behind every layout \u2014 change a logo or font here and it updates on all slides."}, {"title": "Adding Content to a Slide", "text": "Four building blocks, and how to insert each one. Text Images Icons SmartArt Click a text placeholder, or Insert > Text Box for a custom one. Insert > Pictures > This Device, then drag to resize and position. Insert > Icons, search a keyword, then click to add and recolour it. Insert > SmartArt to turn a list into a diagram (steps, cycles, hierarchy)."}, {"title": "Transitions vs. Animations", "text": "Different tools for different moments \u2014 and both work best used sparingly. TRANSITIONS ANIMATIONS Happen between two slides Found on the Transitions tab e.g. Fade, Push, Wipe Pick ONE and use it throughout \u2014 consistency looks intentional Happen to objects within a slide Found on the Animations tab e.g. bullet points appearing one at a time Use only when it aids understanding \u2014 not for decoration"}, {"title": "Adding a Transition \u2014 Step by Step", "text": "Click the slide you want to add a transition to, in the slide thumbnail panel. Open the Transitions tab on the Ribbon. Click a transition style (e.g. Fade) to preview it instantly. Adjust Duration and Sound if needed, in the Timing group. Click Apply To All if you want the same transition on every slide."}, {"title": "Presenter View & Rehearsing Timing", "text": "What only YOU see on screen while presenting. Turn it on Slide Show tab > tick Use Presenter View. What it shows Current slide, next slide, your notes, and a timer \u2014 visible only to you. Rehearse Timings Slide Show > Rehearse Timings records how long each slide actually takes you. Next Slide Current Slide 04:12 Speaker notes: Remember to mention the Q3 results before moving to the chart..."}, {"title": "Design Do's and Don'ts", "text": "TITLE IN ALL CAPS AND TINY Q3 Sales Results This slide crams in far too much text, using six different colours, three fonts, and every bullet point the presenter could think of, making it completely impossible for anyone in the room to read or follow along in real time while also listening to the speaker talk. Revenue up 18% 3 new markets [ Chart ] DON'T DO One idea per slide \u00b7 One consistent theme \u00b7 Large, readable fonts \u00b7 A limited colour palette \u00b7 Images that support, not decorate"}, {"title": "Today's Recap", "text": "Layouts, themes, and the Slide Master control consistency across a deck Text, images, icons, and SmartArt are the four main content building blocks Transitions happen between slides; animations happen within a slide \u2014 use both sparingly Presenter View shows your notes, next slide, and a timer \u2014 visible only to you One idea per slide, readable fonts, and a limited palette beat a crowded slide every time HANDS-ON ACTIVITY Create a 5-slide presentation about yourself or a business idea and present it to the class in under 2 minutes. BEFORE NEXT SESSION Refine the presentation using at least one image and one transition; save as .pptx and .pdf."}]}]}, {"number": 3, "title": "Graphics Design", "intro": "Focus on one beginner-friendly tool (Canva) for speed and confidence, then get a light introduction to a professional tool (CorelDRAW or Photoshop) so you know the landscape without getting overwhelmed.", "days": [{"number": 11, "title": "Design Principles & Tool Landscape", "objectives": ["Explain core design principles: balance, contrast, alignment, hierarchy, colour theory", "Identify which tool suits which task (Canva vs CorelDRAW vs Photoshop)", "Set up and navigate a Canva account"], "topics": ["Elements of design: colour, typography, layout, imagery", "Principles: contrast, alignment, repetition, proximity, white space", "Overview: Canva (quick/social media), CorelDRAW (vector/print), Photoshop (photo editing)", "Canva interface tour: templates, elements, uploads, text, download options"], "activity": "Browse Canva templates and identify 3 examples of good contrast and 3 examples of poor alignment, then discuss as a group.", "practice": "Find one flyer/poster (online or physical) and note two things you would improve about its design.", "slides": [{"title": "BUILDING BLOCKS", "text": "Elements of Design The raw ingredients every designer combines to create a visual. Colour Typography Sets mood and emotion; guides attention and builds brand recognition. The voice of the design \u2014 font choice signals tone, formality, and personality. Layout Imagery How elements are arranged; controls flow and where the eye travels first. Photos and graphics that support and reinforce the message. Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "HOW ELEMENTS WORK TOGETHER", "text": "Principles of Design Balance Contrast Alignment Hierarchy Visual weight feels evenly distributed. Differences make key elements pop. Edges line up; nothing feels random. The eye is guided to what matters most. Colour Theory Repetition Proximity White Space Colour choices set tone and mood. Consistent elements unify a design. Related items are grouped together. Empty space lets content breathe. Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "TOOL LANDSCAPE", "text": "Canva vs CorelDRAW vs Photoshop Canva CorelDRAW Photoshop Quick & template-based Vector graphics Raster photo editing BEST FOR BEST FOR BEST FOR Social media posts, flyers, quick graphics Logos, print artwork, scalable design Photo retouching, compositing, edits PNG \u00b7 JPG \u00b7 PDF CDR \u00b7 PDF \u00b7 SVG PSD \u00b7 JPG \u00b7 PNG Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "QUICK DECISION GUIDE", "text": "Which Tool Do I Reach For? | If the task is... | Reach for... | | A social media graphic or WhatsApp flyer, needed fast | Canva | | A scalable logo or print-ready artwork | CorelDRAW | | Retouching or colour-correcting a photo | Photoshop | | A quick event poster from a template | Canva | | Precise vector shapes and illustrations | CorelDRAW | | Combining/compositing multiple photos | Photoshop | Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "HANDS-ON", "text": "Canva Interface Tour Five places to get comfortable before your first design. Templates Elements Uploads Text Download Ready-made designs for flyers, posts, cards, and more \u2014 the fastest starting point. Shapes, icons, illustrations, and stickers to add visual interest. Bring in your own photos and logos to personalise a design. Add and style headlines, body copy, and fonts pairings. Export as PNG, JPG, or PDF \u2014 choose print-ready or web-ready. Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "PRACTICAL ACTIVITY", "text": "Spot It: Contrast vs Alignment In pairs, browse Canva templates and find real examples, then discuss as a group. Find 3 examples of GOOD CONTRAST Find 3 examples of POOR ALIGNMENT Bold headline against a plain background Light text on a dark card (or vice versa) A bright accent colour that draws the eye Text and images that don't line up on an edge Uneven spacing between elements Elements scattered without a clear grid Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "BEFORE NEXT SESSION", "text": "Homework & Instructor Tip Homework / Assignment Find one flyer or poster (online or physical) and note two things you would improve about its design. Instructor Tip Use real local examples \u2014 market flyers, church or event posters. Trainees engage far more with visuals they already recognise. Week 3 \u00b7 Graphics Design | Day 11"}, {"title": "RECAP", "text": "Key Takeaways Great design rests on a handful of repeatable principles \u2014 balance, contrast, alignment, hierarchy, and colour theory. Canva, CorelDRAW, and Photoshop each solve a different problem \u2014 pick the tool based on the task, not habit. You now have a Canva account and know your way around templates, elements, uploads, text, and export options. Next up: Day 12 \u2014 Canva in Practice: Flyers & Social Media Graphics"}]}, {"number": 12, "title": "Canva in Practice: Flyers & Social Media Graphics", "objectives": ["Design a flyer using a template and custom edits", "Resize a design for multiple platforms (Instagram, WhatsApp status, print)", "Export designs correctly for print vs digital use"], "topics": ["Customising templates: fonts, colours, images, text boxes", "Uploading and using your own photos/logos", "Magic Resize / creating multiple format versions", "Export settings: PNG vs PDF vs JPEG; print-ready vs web-ready"], "activity": "Design an event flyer (e.g., for a fictional business launch) and export it in both a social-media-ready and a print-ready format.", "practice": "Design a simple business card using Canva for a fictional or real business.", "slides": [{"title": "MAKE IT YOUR OWN", "text": "Customising Templates Four things to adjust on any template before it's ready to use. Fonts Colours Swap the template's font for one that matches your brand or event tone \u2014 keep to 1-2 fonts. Recolour shapes, backgrounds, and text to fit your palette using the colour picker. Images Text Boxes Replace stock photos by dragging your own image directly onto the placeholder. Edit, resize, and reposition text boxes so your message reads clearly at every size. Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "PERSONALISE IT", "text": "Uploading Photos & Logos Bring your own visuals into a design in four quick steps. \u2192 \u2192 \u2192 Open Uploads Add your file Drag onto the design Adjust to fit Click the Uploads tab in the left-hand side panel. Upload a photo or logo from your device or phone. Drop it onto the canvas or directly over a placeholder. Resize, crop, or reposition so it sits cleanly in the layout. Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "ONE DESIGN, EVERY PLATFORM", "text": "Magic Resize Reformat one finished design into every size you need, automatically. Original Flyer Instagram Post WhatsApp Status Print Flyer 1:1 Square 9:16 Portrait A4 Portrait Click Resize in the top toolbar, tick the formats you need, and Canva recreates the layout for each one. Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "GET IT RIGHT", "text": "Export Settings That Matter PNG JPEG PDF (Print) Digital, transparent backgrounds Digital, smaller file size High-resolution, print marks BEST FOR BEST FOR BEST FOR Social posts, logos, web graphics Photos, quick digital sharing Flyers, posters, anything printed Best for: web-ready Best for: web-ready Best for: print-ready Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "PRACTICAL ACTIVITY", "text": "Design an Event Flyer Design a flyer for a fictional business launch, then export it two ways. Social-Media-Ready Version Print-Ready Version Resize to Instagram Post (1:1) Export as PNG or JPEG Keep text large enough for small screens Resize to A4 or the required print size Export as high-resolution PDF (Print) Check margins and bleed before saving Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "BEFORE NEXT SESSION", "text": "Homework & Instructor Tip Homework / Assignment Design a simple business card using Canva for a fictional or real business. Instructor Tip Give a fixed brief \u2014 a specific event, colours, and text \u2014 rather than 'design anything.' Constraints help beginners finish. Week 3 \u00b7 Graphics Design | Day 12"}, {"title": "RECAP", "text": "Key Takeaways Templates are a starting point \u2014 fonts, colours, images, and text boxes make a design truly yours. Magic Resize turns one flyer into every format you need \u2014 square, portrait, or print \u2014 in seconds. The right export format matters: PNG/JPEG for digital, high-resolution PDF for anything printed. Next up: Day 13 \u2014 Introduction to CorelDRAW / Photoshop"}]}, {"number": 13, "title": "Introduction to CorelDRAW / Photoshop", "objectives": ["Understand the difference between vector and raster graphics", "Perform basic shape/text creation in CorelDRAW OR basic photo editing in Photoshop", "Use layers at a beginner level"], "topics": ["Vector vs raster: when to use which, and why it matters for scaling/print", "CorelDRAW basics: shapes, the Pick tool, fill/outline, text tool", "\u2014 OR \u2014 Photoshop basics: selection tools, cropping, brightness/contrast, layers", "Saving/exporting in the right format (.cdr/.pdf or .psd/.jpg/.png)"], "activity": "Guided step-by-step: recreate a simple logo mark (CorelDRAW) or retouch a sample photo (Photoshop), following the instructor live.", "practice": "Repeat the guided exercise once more independently to build muscle memory with the tool.", "slides": [{"title": "THE CORE DIFFERENCE", "text": "Vector vs Raster Same idea, scaled up \u2014 watch what happens to each. VECTOR RASTER Made of paths & points Made of a fixed pixel grid \u2192 \u2192 Stays perfectly sharp at any size Gets blocky and blurry when enlarged Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "QUICK DECISION GUIDE", "text": "When to Use Which Why it matters: vector scales for print & billboards; raster is how cameras and screens capture detail. | If you need... | Use... | | A logo that must scale from a business card to a billboard | Vector | | A photo for a magazine cover or website banner | Raster | | A clean icon set for an app or website | Vector | | To touch up or retouch a portrait photo | Raster | | Print-ready artwork with crisp lines and text | Vector | Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "HANDS-ON", "text": "Choose Your Path Today's practical work follows ONE of these two tools \u2014 set by your instructor. CorelDRAW Photoshop Vector illustration & layout Photo editing & retouching Shapes & the Pick tool Fill and outline The text tool Selection tools & cropping Brightness & contrast Layers Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "PATH A \u00b7 CORELDRAW", "text": "CorelDRAW Basics Four tools to get comfortable with before building anything bigger. Shapes The Pick Tool Draw rectangles, ellipses, and polygons from the toolbox as building blocks. Select, move, resize, and rotate any object on the page. Fill & Outline Text Tool Colour a shape's interior (fill) and its border (outline) independently. Add headline or paragraph text and style it like any other object. Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "PATH B \u00b7 PHOTOSHOP", "text": "Photoshop Basics Four tools to get comfortable with before editing a real photo. Selection Tools Cropping Use the marquee or lasso to select part of a photo before editing it. Trim the canvas down to the frame and size you actually need. Brightness / Contrast Layers Adjust exposure and tonal range to make a photo pop. Stack edits on separate layers so nothing is permanently changed. Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "WORKS THE SAME IN BOTH TOOLS", "text": "Understanding Layers Think of layers as clear sheets stacked on top of each other. Background Photo Adjustment / Colour Text / Logo Top layer (Text/Logo): always visible in front Middle layer (Adjustment/Colour): edits without touching the photo underneath Bottom layer (Background Photo): the original base image Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "GET IT RIGHT", "text": "Saving & Exporting Keep an editable master file, then export a shareable copy. CorelDRAW Photoshop .CDR Native, fully editable master file .PSD Native, fully editable with all layers .PDF For sharing, printing, or approval .JPG Compressed photo for web or sharing .PNG Supports transparency, for graphics Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "PRACTICAL ACTIVITY", "text": "Guided Step-by-Step Follow the instructor live, one step at a time, on your chosen tool. CorelDRAW: Recreate a Logo Mark Photoshop: Retouch a Sample Photo Draw the basic shapes that form the mark Use the Pick tool to align and resize Apply fill and outline colours Add the business name with the text tool Crop the photo to a clean frame Select an area to adjust with a selection tool Correct brightness and contrast Add a text layer without flattening the photo Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "BEFORE NEXT SESSION", "text": "Homework & Instructor Tip Homework / Assignment Repeat today's guided exercise once more, independently, to reinforce muscle memory with the tool. Instructor Tip Pick ONE tool \u2014 based on what's installed/licensed and what the local job market demands. Don't split the day evenly; it overwhelms beginners. Week 3 \u00b7 Graphics Design | Day 13"}, {"title": "RECAP", "text": "Key Takeaways Vector graphics scale perfectly for logos and print; raster graphics are how photos are captured and edited. You've made your first shapes and text in CorelDRAW, or your first edits in Photoshop. Layers let you stack edits without permanently changing the original \u2014 in either tool. Next up: Day 14 \u2014 Branding Project: Logo & Identity"}]}, {"number": 14, "title": "Branding Project: Logo & Identity", "objectives": ["Design a simple logo reflecting a brand concept", "Apply a consistent colour palette and font pairing across materials"], "topics": ["What makes a logo effective: simplicity, memorability, scalability", "Choosing a colour palette (2\u20133 colours) and font pairing (max 2 fonts)", "Applying the logo across a flyer, business card, and social post for consistency"], "activity": "Design a logo for a fictional brand (assigned or self-chosen) and apply it consistently to the flyer and business card built earlier in the week.", "practice": "Prepare a one-line explanation of your design choices (colour, font, symbol) for tomorrow's mini critique.", "slides": [{"title": "THE THREE PILLARS", "text": "What Makes a Logo Effective? Simplicity Memorability Scalability A clean mark is instantly recognisable and easy to reproduce anywhere \u2014 no clutter, no fine detail that gets lost. A distinctive shape or idea sticks in people's minds after just one or two glances. It must look just as good tiny on a favicon as it does huge on a banner or billboard. Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "2-3 COLOURS, USED WITH INTENT", "text": "Choosing a Colour Palette Give each colour a clear job \u2014 don't let them compete for attention. Backgrounds, logo, headers \u2014 the colour people remember your brand by. Primary 60% Supporting sections, buttons, highlights \u2014 complements the primary. Secondary 30% Small details only \u2014 a call-to-action, an icon, a single highlight. Accent 10% Rule of thumb: 2 colours is safe for beginners, 3 adds flexibility without adding chaos. Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "MAX 2 FONTS", "text": "Font Pairing One font to say it boldly, one font to say the rest clearly. HEADING FONT BODY FONT Bright Bakery Fresh bread, baked daily Used for: paragraphs, captions, fine print Used for: logo wordmark, headlines, titles A simple, highly readable sans-serif keeps longer text easy on the eye. A serif or characterful display font gives a brand personality and presence. Keep it to two fonts maximum \u2014 more than that starts to look inconsistent. Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "ONE IDENTITY, EVERY MATERIAL", "text": "Applying It Consistently The same logo, palette, and fonts \u2014 carried across every format. FLYER BUSINESS CARD SOCIAL POST Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "PRACTICAL ACTIVITY", "text": "Brand a Fictional Business Design a logo, then apply it consistently to the flyer and business card built earlier this week. \u2192 \u2192 \u2192 Design the logo Lock in your palette & fonts Apply to the flyer Apply to the business card Create a simple mark reflecting your assigned or chosen brand concept. Choose 2-3 colours and no more than 2 fonts, and stick to them. Update the Week 3 flyer with your new logo, colours, and fonts. Carry the same identity onto your business card design. Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "BEFORE NEXT SESSION", "text": "Homework & Instructor Tip Homework / Assignment Prepare a one-line explanation of the design choices you made \u2014 colour, font, and symbol \u2014 for tomorrow's mini critique. Instructor Tip This is often the day trainees discover whether graphics design excites them. Encourage them \u2014 without over-promising quick professional-level results. Week 3 \u00b7 Graphics Design | Day 14"}, {"title": "RECAP", "text": "Key Takeaways A great logo is simple, memorable, and scales cleanly from a favicon to a billboard. 2-3 colours with clear roles, and no more than 2 fonts, keep a brand feeling deliberate. Consistency is what makes a brand recognisable \u2014 the same identity, applied everywhere. Next up: Day 15 \u2014 Portfolio Project & Peer Critique"}]}, {"number": 15, "title": "Portfolio Project & Peer Critique", "objectives": ["Assemble a small design portfolio (flyer, business card, logo)", "Give and receive constructive design feedback"], "topics": ["Recap of Week 3 principles and tools", "How to structure a simple design portfolio (even 3\u20134 pieces is enough to start)"], "activity": "Mini gallery walk: display your 3 design pieces (physically or on-screen); give one positive comment and one improvement suggestion to two classmates.", "practice": "Save all Week 3 work into your 'My Training' folder from Week 1, in a dedicated 'Design Portfolio' subfolder.", "slides": [{"title": "Core Principles of Graphic Design", "text": "Hierarchy & Contrast Balance & Alignment Color Theory Guiding the viewer's eyes using structural sizing, weight, and visual dynamics to highlight core information first. Creating hidden visual grids. Distributing elements carefully to establish dynamic symmetry and modern whitespace balance. Using 2 to 3 colors purposefully to invoke brand feeling, support legibility, and emphasize actions clearly."}, {"title": "Our Diverse Digital Design Toolkit", "text": "Canva Ecosystem CorelDRAW / Photoshop Speed & Adaptability: Leverages cloud-based preset grids, layout components, and custom brand shapes. Vector & Raster Mastery: Managing layers, high-definition cropping, and complex path outlines from scratch. Deployment: Perfect for fast digital mockups, multi-platform resizes, and rapid social media generation. Scalability: Crucial for ensuring high-quality printing without losing detail or distorting boundaries."}, {"title": "02. Structuring Your Portfolio", "text": "Assembling a clean, professional, three-part personal brand kit for clients."}, {"title": "The Three Portfolio Pillars", "text": "Pillar 1: Logo Identity \u2014 A clean, scalable vector asset designed using a cohesive color palette. Pillar 2: Business Card \u2014 Balanced typography detailing core services and clean contact data. Pillar 3: Brand Flyer \u2014 Practical hierarchy demonstrating alignment and structured call-to-actions."}, {"title": "Peer Critique: Gallery Walk Rules", "text": "| Critique Standard | Specific Feedback Prompt | Target Outcome | | Alignment Check | Do the logo and business card elements follow a consistent grid line? | Professional polish | | Contrast & Legibility | Can the contact details be scanned instantly from a distance of 1 meter? | Clear visual communication | | Palette Discipline | Does the flyer contain a strict, deliberate limit of 2 to 3 total colors? | Cohesive brand image | | Actionable Advice | Provide exactly one encouraging finding and one modification step. | Constructive peer growth |"}, {"title": "Ready to Showcase?", "text": "Ensure all three Week 3 brand materials are safely compiled in your local \"Design Portfolio\" folder. COMMENCE GALLERY CRITIQUE | SAVE ALL DELIVERABLES"}, {"title": "Image Sources", "text": "https://cdn.prod.website-files.com/655375faf5e7806a315ace40/684bfb69635539a161946cb2_1.png Source: www.todaymade.com"}]}]}, {"number": 4, "title": "Database Management & Introduction to AI", "intro": "Databases can feel abstract at first \u2014 anchor every concept in something tangible (a school register, a shop's stock list). The AI segment is hands-on and tool-based rather than theoretical.", "days": [{"number": 16, "title": "Database Concepts & Getting Started with MS Access", "objectives": ["Explain what a database is and why spreadsheets aren't always enough", "Understand tables, fields, and records", "Create a simple table in Microsoft Access"], "topics": ["What is a database? Real-world examples (school records, hospital patient lists, shop inventory)", "Key terms: table, field (column), record (row), primary key", "Opening Access; creating a new blank database", "Designing a simple table with appropriate field types (Text, Number, Date, Currency)"], "activity": "Design and create a 'Student Register' table with fields for Name, Age, Class, Phone Number, and Date Enrolled.", "practice": "List five other real-life examples (from your own life or work) that could be turned into a database table.", "slides": [{"title": "What Is a Database?", "text": "An organised collection of related information, built to be searched and updated easily. School Records Hospital Patient Lists Shop Inventory Student names, classes, grades, attendance \u2014 all linked and searchable. Patient details, appointments, and treatment history kept accurately. Products, stock levels, and prices updated as items sell."}, {"title": "Why Spreadsheets Aren't Always Enough", "text": "Excel is great for numbers. A database is built for managing related records. Excel Spreadsheet Access Database Great for calculations and quick lists Data often repeats across rows, causing errors Struggles once several linked lists are involved One person editing at a time works best Built to manage related records accurately Each piece of data is stored once, reducing errors Links multiple tables together (e.g. Students + Courses) Designed for many records and repeatable questions (queries)"}, {"title": "Key Terms", "text": "Four words you'll use constantly from today onward. \u2191 Table Student ID Name Class Table Stores one type of thing \u2014 e.g. Students. Field (Column) One category of data \u2014 e.g. Name, Class. Record (Row) One complete entry \u2014 e.g. one student. Primary Key A field that uniquely identifies each record \u2014 no two rows can share one. Field (column) \u2192 S001 Amaka Obi JSS1 S002 Tunde Bello JSS2 \u2190 Record (row) S003 Chidi Eze JSS1 \u2191 Primary Key (unique per row)"}, {"title": "Opening Access & Creating a Database", "text": "Open Microsoft Access from the Start Menu. On the opening screen, click \"Blank Database\". Type a clear file name \u2014 e.g. StudentRegister.accdb. Choose where to save it, then click Create. Access opens with a new, empty table ready for you to design."}, {"title": "Designing Your First Table", "text": "Example: a \"Student Register\" table. Field Name Data Type Switch to Design View to name your fields. Student ID Text Type each Field Name in its own row (e.g. Student ID). Full Name Text Date Enrolled Date Choose the correct Data Type for each field. Term Fee Currency Right-click the ID field and choose Primary Key. Save the table and give it a clear name."}, {"title": "Choosing the Right Field Type", "text": "Picking the correct type prevents errors and enables calculations later. Text Number Date/Time Currency Names, addresses \u2014 any short text. Quantities you might calculate with. Dates and times, sortable correctly. Money values, formatted automatically. \"Amaka Obi\" 12/03/2026 $150.00"}, {"title": "Today's Recap", "text": "A database organises related information so it can be searched and updated easily Tables store one type of thing; fields are columns; records are rows A primary key uniquely identifies every record Access opens with Blank Database \u2014 name it and save it Choose Text, Number, Date/Time, or Currency based on what the field will hold HANDS-ON ACTIVITY Design and create a 'Student Register' table with fields for Name, Age, Class, Phone Number, and Date Enrolled. BEFORE NEXT SESSION List five other real-life examples (from your own life or work) that could be turned into a database table."}]}, {"number": 17, "title": "Queries: Asking Questions of Your Data", "objectives": ["Enter and edit records in a table", "Build a simple query to filter and sort data", "Understand how queries answer specific questions"], "topics": ["Entering sample records (at least 10\u201315) into the Day 16 table", "Sorting and filtering records directly in the table view", "Creating a simple Select Query with criteria (e.g., 'Class = JSS1')", "Sorting query results and adding basic calculated fields (optional, light touch)"], "activity": "Write two queries: one to find all students in a specific class, another to find students enrolled after a certain date.", "practice": "Add five more records to the table and re-run yesterday's queries to confirm results update correctly.", "slides": [{"title": "Entering Sample Records", "text": "STEP 1 OF 4 Add at least 10\u201315 rows to your Students table from Day 16. Student ID Full Name Class Open the Students table in Datasheet View. S001 Amaka Obi JSS1 Click the empty row at the bottom (marked with *). S002 Tunde Bello JSS2 S003 Chidi Eze JSS1 Type each value, pressing Tab to move to the next field. ... ... ... Press Enter to save the row and start a new one. S014 Zainab Musa JSS3 Repeat until you have 10\u201315 realistic records."}, {"title": "Sorting & Filtering in Table View", "text": "Quick, temporary ways to view your data differently \u2014 without writing a query. Sort Filter 1. Click inside the column you want to sort by 2. Click the Ascending (A\u2192Z) or Descending (Z\u2192A) button on the Home tab 3. Rows rearrange immediately 1. Right-click a value (e.g. \"JSS1\") in the Class column 2. Choose \"Equals JSS1\" from the menu 3. Only matching rows stay visible; click Toggle Filter to remove it"}, {"title": "What Is a Query?", "text": "A saved question you can ask your database, any time. \"Show me every student in Class JSS1\" It doesn't change your data It's reusable Unlike a filter, it's permanent A query filters and displays \u2014 your original table stays exactly as it was. Save it once, and run the same question again any time your data changes. Filters are temporary and disappear; a saved query stays in your database."}, {"title": "Creating a Select Query", "text": "STEP 2 OF 4 Building a query in Query Design View. Go to Create > Query Design. Students \u2022 StudentID Add the Students table, then close the dialog. \u2022 FullName \u2022 Class Double-click each field you want to see (e.g. FullName, Class). Field Sort Criteria Class Ascending \"JSS1\" In the Criteria row under Class, type \"JSS1\". FullName \u2014 Click Run (the red ! button) to see matching results."}, {"title": "Query Criteria in Action", "text": "Criteria: Class = \"JSS1\" \u2014 only matching rows appear in the results. Full Name Class Amaka Obi JSS1 Tunde Bello JSS2 Chidi Eze JSS1 Zainab Musa JSS3 Emeka Uche JSS1 Ify Nwosu JSS2 \u2713 Matches the criteria \u2014 these 3 rows are what the query returns"}, {"title": "Sorting Results & Calculated Fields", "text": "Two light-touch extras to make a query even more useful. Sorting Query Results Calculated Fields (Optional) In the query grid's Sort row, choose Ascending or Descending under any field. Results appear in that order every time the query runs. Type a new column heading like FullYear: Year([DateOfBirth]). Access calculates a new value for every row automatically \u2014 shown here just so you know it exists."}, {"title": "Today's Recap", "text": "Datasheet View is where you type new records directly into a table Sort and Filter give quick, temporary views of your data A query is a saved, reusable question that never changes your original data Query Design View lets you pick fields and set Criteria (e.g. Class = \"JSS1\") Queries can also sort results and add simple calculated fields HANDS-ON ACTIVITY Write two queries: one to find all students in a specific class, another to find students enrolled after a certain date. BEFORE NEXT SESSION Add five more records to the table and re-run today's queries to confirm results update correctly."}]}, {"number": 18, "title": "Forms & Reports", "objectives": ["Create a user-friendly data-entry form", "Generate a printable report from a table or query"], "topics": ["Why forms matter: easier, safer data entry than raw tables", "Auto-generating a form using Access's Form Wizard", "Auto-generating a report using the Report Wizard", "Light formatting of a report for printing (headers, grouping)"], "activity": "Generate a form to add three new students, then generate a printable class report grouped by Class.", "practice": "Write two sentences on how this 'Student Register' database could realistically be used in a school office.", "slides": [{"title": "Why Forms Matter", "text": "The same data, but a much friendlier way to enter it. ID Name Class DOB Fees New Student Full Name Amaka Obi Class JSS1 Date of Birth 04/07/2012 Fees Paid \u20a625,000.00 DON'T DO Dense, cramped, easy to edit the wrong cell One record at a time, clearly labelled, hard to miss a field"}, {"title": "Creating a Form with the Form Wizard", "text": "STEP 1 OF 2 The Form Wizard builds a working form for you in seconds. Students Click the Students table in the Navigation Pane to select it. StudentID Go to the Create tab on the Ribbon. S014 FullName Click Form Wizard. Zainab Musa Choose which fields to include, then click Next. Class JSS3 Pick a layout (Columnar is the friendliest for data entry). Give the form a name and click Finish. |\u25c0 \u25c0 Record 14 of 14 \u25b6 \u25b6| \uff0b"}, {"title": "Creating a Report with the Report Wizard", "text": "STEP 2 OF 2 Turns a table or query into a clean, printable document. Student Register Select the table or query you want to report on. Amaka Obi JSS1 Go to the Create tab, then click Report Wizard. Chidi Eze JSS1 Choose the fields to include, then click Next. Tunde Bello JSS2 Choose a field to Group By (e.g. Class) so records cluster together. Ify Nwosu JSS2 Zainab Musa JSS3 Choose a sort order within each group (e.g. Name A\u2013Z). Sorted A\u2013Z within the report Pick a layout, give the report a title, and click Finish."}, {"title": "Formatting a Report for Printing", "text": "Headers and grouping turn a plain list into something genuinely useful. Student Register \u2014 by Class Report Header The title shown once at the very top. Grouping Clusters related records under a heading, like \"Class: JSS1\". Page Footer Shows page numbers so a printed report stays in order. Class: JSS1 Amaka Obi S001 Chidi Eze S003 Emeka Uche S009 Class: JSS2 Tunde Bello S002 Ify Nwosu S011 Page 1 of 2"}, {"title": "Today's Recap", "text": "Forms show one record at a time \u2014 friendlier and safer than editing a raw table The Form Wizard builds a working form from any table in a few clicks Reports format table or query data for printing and sharing The Report Wizard can group records (e.g. by Class) and sort within each group Headers, grouping, and page footers make a printed report genuinely readable HANDS-ON ACTIVITY Generate a form to add three new students, then generate a printable class report grouped by Class. BEFORE NEXT SESSION Write two sentences on how this 'Student Register' database could realistically be used in a school office."}]}, {"number": 19, "title": "Introduction to Artificial Intelligence", "objectives": ["Explain what AI is (and isn't) in plain language", "Identify everyday tools that already use AI", "Understand what a large language model (like ChatGPT or Claude) can and cannot reliably do"], "topics": ["Demystifying AI: pattern recognition, not magic or 'thinking' like a human", "Everyday AI: recommendation feeds, voice assistants, spam filters, face unlock", "Introducing chat-based AI assistants (ChatGPT, Claude, Gemini, Copilot)", "Strengths (drafting, summarising, brainstorming, explaining) vs limits (can be wrong, needs fact-checking, no true understanding)", "Basic AI ethics: privacy, not pasting sensitive personal data, verifying important information"], "activity": "Watch a live demo of an AI assistant answering several sample questions \u2014 both a strong answer and a flawed one \u2014 and practice spotting the difference.", "practice": "Create a free account on one AI chat tool and ask it three questions about a topic you know well, to test the answers' accuracy.", "slides": [{"title": "Demystifying AI", "text": "It's pattern recognition at a massive scale \u2014 not magic, and not \"thinking\" like a human. Lots of Data Find Patterns Predict / Respond Millions of examples \u2014 text, images, sounds. The system learns what usually follows what. It produces the most likely next word, label, or action. Important distinction: AI recognises statistical patterns in data. It does not understand meaning, have beliefs, or \"know\" things the way a person does \u2014 even when its answers sound confident and human-like."}, {"title": "Everyday AI You Already Use", "text": "You've been using AI for years \u2014 often without realising it. Recommendation Feeds Voice Assistants Spam Filters Face Unlock YouTube, TikTok, and Netflix suggesting what to watch next. Siri, Google Assistant, and Alexa understanding spoken requests. Your email automatically sorting junk away from your inbox. Your phone recognising your face to unlock instantly."}, {"title": "Meet the Chat-Based AI Assistants", "text": "Tomorrow's session will get hands-on with one of these \u2014 today is just an introduction. ChatGPT Claude Gemini Copilot A chat-based AI assistant you can ask questions, in plain written conversation. A chat-based AI assistant you can ask questions, in plain written conversation. A chat-based AI assistant you can ask questions, in plain written conversation. A chat-based AI assistant you can ask questions, in plain written conversation. All four work in a similar way: you type a message (a \"prompt\"), and the assistant replies in conversational text."}, {"title": "Strengths vs. Limits", "text": "Knowing both sides is what makes you a smart AI user. STRENGTHS LIMITS Drafting \u2014 emails, letters, first versions of documents Summarising \u2014 long text into a short overview Brainstorming \u2014 quick lists of ideas to react to Explaining \u2014 breaking down a topic in simple terms Can be confidently wrong \u2014 sounding sure while being incorrect Needs fact-checking \u2014 always verify anything important No true understanding \u2014 no beliefs, feelings, or awareness Reflects its training data \u2014 including any bias within it"}, {"title": "Why AI Sometimes \"Hallucinates\"", "text": "A hallucination is a confident, plausible-sounding answer that is simply incorrect. The habit that protects you Who won the 2031 World Cup? For anything factual, recent, or important \u2014 dates, statistics, names, current events \u2014 verify the answer against a reliable source before trusting or sharing it. \"Brazil won the 2031 World Cup, defeating Germany 3-1 in the final.\" That event hasn't happened yet \u2014 this answer sounds confident but was invented."}, {"title": "Basic AI Ethics", "text": "Three habits for using AI responsibly, from day one. Protect Privacy Never Paste Sensitive Data Verify Important Information Be mindful of what you share \u2014 treat AI chats like any other place your words could be seen. Don't paste passwords, ID numbers, medical details, or other people's private information. Double-check anything that matters \u2014 facts, figures, and advice \u2014 before you rely on it."}, {"title": "Today's Recap", "text": "AI finds patterns in data \u2014 it doesn't think or understand like a human Recommendation feeds, voice assistants, spam filters, and face unlock are AI you already use ChatGPT, Claude, Gemini, and Copilot are chat-based AI assistants AI is strong at drafting, summarising, brainstorming, and explaining AI can be confidently wrong (\"hallucinate\") \u2014 always fact-check what matters Protect privacy, never paste sensitive data, and verify important information HANDS-ON ACTIVITY Watch a live demo of an AI assistant answering several sample questions \u2014 both a strong answer and a flawed one \u2014 and practice spotting the difference. BEFORE NEXT SESSION Create a free account on one AI chat tool and ask it three questions about a topic you know well, to test the answers' accuracy."}]}, {"number": 20, "title": "Practical AI: Prompting for Productivity", "objectives": ["Write clear, effective prompts to get useful AI output", "Use AI to support real Office/Design tasks from earlier weeks"], "topics": ["Anatomy of a good prompt: context, task, format, tone", "Using AI to draft a CV summary, an email, or social captions", "Using AI to brainstorm design ideas or generate an outline for a presentation", "Combining AI output with your own editing \u2014 never copy-paste blindly"], "activity": "Use an AI assistant to draft a cover letter for a job, then personally edit and correct it, comparing before/after.", "practice": "Save the AI-assisted cover letter into your portfolio folder; be ready to explain what you changed and why.", "slides": [{"title": "Anatomy of a Good Prompt", "text": "Four ingredients turn a vague request into a genuinely useful one. Context Task Format Tone Who you are or the situation \u2014 \"I'm applying for a customer service role...\" What you want done \u2014 \"...write a 3-sentence CV summary...\" How it should look \u2014 \"...as a short paragraph, no bullet points...\" The voice to use \u2014 \"...in a warm, professional tone.\""}, {"title": "Weak Prompt vs. Strong Prompt", "text": "The same request, transformed by adding context, task, format, and tone. \"Write an email\" \u2193 add C-T-F-T \u2193 \"I run a small bakery [context]. Write a 3-sentence email [task] to customers announcing weekend opening hours, as a short friendly paragraph [format], in a warm and welcoming tone [tone].\""}, {"title": "Writing a Prompt, Step by Step", "text": "Open your AI chat tool and start a new conversation. State the Context \u2014 a short sentence about who you are or the situation. State the Task clearly \u2014 exactly what you want produced. Add the Format you want \u2014 length, structure, bullet points or paragraph. Add the Tone \u2014 formal, friendly, persuasive, simple, etc. Send the prompt, read the reply carefully, then edit it yourself."}, {"title": "Using AI for Office Tasks", "text": "Applying what you built in Weeks 1\u20132 with an AI assist. CV Summary An Email Social Captions Prompt: \"Write a 3-sentence CV summary for a customer service role, professional tone.\" Prompt: \"Draft a polite follow-up email asking about a job application status.\" Prompt: \"Write 3 short, friendly Instagram captions for a bakery's weekend special.\""}, {"title": "Using AI for Design & Presentations", "text": "Applying what you built in Week 3 with an AI assist. Brainstorm Design Ideas Generate a Slide Outline \"Suggest 5 colour palette ideas for a bakery logo, warm and inviting.\" \"Outline 5 slide titles for a presentation introducing my small business.\" Use the ideas as a starting point \u2014 then build the actual design yourself in Canva. Use the outline as your slide structure \u2014 then design and fill in each slide in PowerPoint."}, {"title": "Edit \u2014 Never Copy-Paste Blindly", "text": "AI gives you a strong first draft. Your edit is what makes it genuinely yours. AI Draft (unedited) Your Edited Version \"I am a highly motivated individual with a passion for customer service excellence, seeking to leverage my extensive skill set...\" \"I enjoy helping people and have worked on a busy shop floor for two years, staying calm and friendly even during rush hours.\" Shorter, specific, and sounds like a real person \u2014 because you checked it and made it true to you."}, {"title": "Today's Recap", "text": "A strong prompt includes Context, Task, Format, and Tone Adding these four ingredients turns a vague request into a useful one AI can help draft CVs, emails, and social captions AI can also brainstorm design ideas and outline a presentation Always edit AI output yourself \u2014 never copy-paste it blindly HANDS-ON ACTIVITY Use an AI assistant to draft a cover letter for a job, then personally edit and correct it, comparing before/after. BEFORE NEXT SESSION Save the AI-assisted cover letter into your portfolio folder; be ready to explain what you changed and why."}]}]}, {"number": 5, "title": "Cybersecurity & Capstone Project", "intro": "This closing week protects everything you built in Weeks 1\u20134 (your accounts, documents, and new AI habits) and ends with a confidence-building final showcase.", "days": [{"number": 21, "title": "Cybersecurity Fundamentals", "objectives": ["Define common cyber threats in plain language", "Recognize the difference between a legitimate and a suspicious message/website"], "topics": ["What is cybersecurity and why it matters to ordinary users, not just companies", "Common threats: viruses, malware, phishing, scams, identity theft", "Anatomy of a phishing email/SMS: urgency, spelling errors, suspicious links, requests for money or codes", "Safe vs unsafe websites: checking for HTTPS, verifying a site before entering details"], "activity": "Review five sample messages (mix of genuine and fake) and identify which are phishing attempts and why.", "practice": "Check your email 'Spam/Junk' folder and identify one real example of a phishing attempt, without clicking anything.", "slides": [{"title": "What Is Cybersecurity \u2014 and Why You?", "text": "Protecting devices, accounts, and data from unauthorised access or damage. \"Cybersecurity isn't just for banks and big companies \u2014 attackers target ordinary people every single day.\" Your accounts hold real money, photos, and personal messages Your identity can be used to open loans or accounts in your name A hacked account can be used to scam your friends and family Attackers use automated tools \u2014 they don't have to target you personally to reach you"}, {"title": "Common Threats \u2014 In Plain Language", "text": "Virus Malware Phishing Scams Identity Theft Harmful software that spreads and damages files or devices. Any malicious software designed to harm, spy, or steal. A fake message pretending to be trustworthy, to steal information. Tricks designed to pressure you into sending money or details. Someone using your personal details without permission."}, {"title": "Anatomy of a Phishing Email", "text": "Five warning signs, all in one message. URGENT: Verify Your Account Now!! Urgency \u2014 \"act now or lose access\" From: security-alert@bank-verify-now.info Dear Customer, We noticed unusual activty on your acount. Your access will be suspended in 24 hours unless you confirm your password and OTP code immediately. [ CLICK HERE TO VERIFY ] Mismatched sender address \u2014 not the real company's domain Generic greeting \u2014 \"Dear Customer\", not your name Spelling errors \u2014 \"activty\", \"acount\" Asking for a password or one-time code \u2014 no legitimate company does this"}, {"title": "Anatomy of a Suspicious SMS", "text": "The same tricks, adapted for text messages. Unknown or unrecognised sender number Unknown Number \"Your parcel could not be delivered. Pay \u20a6500 fee now to reschedule: bit.ly/xk2plq \u2014 expires in 1 hour!\" A shortened, unfamiliar link (hides the real destination) A small, easy-to-miss \"fee\" designed to seem harmless A tight countdown creating false urgency A request tied to something you weren't expecting"}, {"title": "Safe vs. Unsafe Websites", "text": "Checking the address bar takes two seconds and prevents most mistakes. https://www.yourbank.com http://yourbank-secure-login.info SAFE UNSAFE HTTPS and the padlock The \"s\" in https:// and a small padlock icon mean the connection is encrypted \u2014 but this alone doesn't guarantee the site is trustworthy. The domain name matters more \"yourbank-secure-login.info\" is not the same as \"yourbank.com\" \u2014 scammers register look-alike addresses on purpose."}, {"title": "Verifying a Site Before Entering Details", "text": "Look at the address bar \u2014 check for https:// and the padlock icon. Read the domain name carefully \u2014 check for misspellings or extra words. If you followed a link from a message, stop \u2014 type the address yourself instead. Search for the company's official site independently and compare. When in doubt, contact the company directly using a number or address you already trust \u2014 never one from the suspicious message."}, {"title": "Today's Recap", "text": "Cybersecurity protects everyone, not just companies \u2014 you are a target too Viruses, malware, phishing, scams, and identity theft are the main everyday threats Phishing messages combine urgency, mismatched senders, and requests for codes or passwords HTTPS and a padlock help, but the exact domain name matters even more Always verify a site independently rather than clicking a link in a message HANDS-ON ACTIVITY Review five sample messages (mix of genuine and fake) and identify which are phishing attempts and why. BEFORE NEXT SESSION Check your email's Spam/Junk folder and identify one real example of a phishing attempt, without clicking anything."}]}, {"number": 22, "title": "Passwords, Authentication & Data Protection", "objectives": ["Create and manage strong, unique passwords", "Understand two-factor authentication (2FA)", "Apply basic data-protection habits (backups, locking devices)"], "topics": ["What makes a password strong: length, mix of characters, avoiding personal info", "Password reuse risk and the basic idea of a password manager", "Two-factor authentication: what it is and how to turn it on", "Backing up important files (cloud storage, external drive)", "Physical security: locking screens, not sharing PINs/passwords"], "activity": "Update your email password to a stronger one (following the guidelines) and enable 2FA if not already active.", "practice": "Write down (on paper, not digitally) your new password reasoning technique \u2014 without writing the actual password \u2014 and back up one important file to cloud storage.", "slides": [{"title": "What Makes a Password Strong?", "text": "A password's strength comes from length and unpredictability, not cleverness. Weak Strong password123 Bl4nket-Zebra!River62 Short and common \u2014 appears in leaked password lists Uses an obvious pattern (word + numbers) Easily guessed by automated cracking tools in seconds Long \u2014 at least 12 characters Mixes upper/lowercase letters, numbers, and symbols Avoids personal info \u2014 no names, birthdays, or pet names"}, {"title": "Password Reuse Risk", "text": "One password, reused everywhere, means one leak exposes everything. Email If one of these leaks the shared password, an attacker can try it on all the others. Banking ONE PASSWORD Social Media Shopping A password manager (built into most browsers, or a dedicated app) generates and remembers a different strong password for every account \u2014 so you only need to remember one master password."}, {"title": "Two-Factor Authentication (2FA)", "text": "A second proof of identity, beyond just a password. Something You Know Something You Have Access Granted Your password A code sent to your phone Both together let you in Even if an attacker steals your password, they still can't get in without your phone \u2014 this one habit blocks the vast majority of account takeovers."}, {"title": "Turning On 2FA", "text": "STEP 1 OF 1 The exact menu differs slightly by app, but the process is always similar. Open your account's Settings menu. Find \"Security\" or \"Login & Security\". Look for \"Two-Factor Authentication\" or \"2-Step Verification\". Choose a method: an authenticator app (recommended) or SMS code. Follow the prompts to link your phone. Save any backup codes given, somewhere safe \u2014 you'll need them if you lose your phone."}, {"title": "Backing Up Important Files", "text": "A backup means a lost or damaged device doesn't mean lost data. Cloud Storage External Drive e.g. Google Drive, OneDrive, iCloud Accessible from any device with internet Automatically syncs \u2014 often the easiest option A USB flash drive or external hard drive Doesn't need internet \u2014 good backup for large files Keep it somewhere safe, separate from your main device"}, {"title": "Physical Security", "text": "Digital habits matter, but so does protecting the device in your hand. Lock Your Screen Never Share PINs/Passwords Use a Passcode or Biometrics Always lock your computer or phone when you step away, even briefly. Not with friends, coworkers, or anyone claiming to be tech support. A PIN, pattern, or fingerprint stops casual access if a device is lost."}, {"title": "Today's Recap", "text": "Strong passwords are long, mixed, and avoid personal information Reusing one password everywhere means one leak exposes every account A password manager can generate and remember strong, unique passwords for you 2FA adds a second proof of identity \u2014 a stolen password alone isn't enough Cloud storage and external drives both protect you from losing files Locking your screen and never sharing PINs protects the device itself HANDS-ON ACTIVITY Update your email password to a stronger one (following the guidelines) and enable 2FA if not already active. BEFORE NEXT SESSION Write down your new password reasoning technique (without writing the actual password) and back up one important file to cloud storage."}]}, {"number": 23, "title": "Practical Safety: Devices, Networks & Social Engineering", "objectives": ["Configure basic antivirus/security settings", "Use public Wi-Fi more safely", "Recognize social engineering tactics beyond email (calls, fake tech support, impersonation)"], "topics": ["Antivirus/Windows Security basics: running a scan, keeping software updated", "Risks of public Wi-Fi; safer alternatives (mobile data, VPN concept)", "Social engineering: fake customer care calls, impersonation, 'urgent' requests for money or OTPs", "Safe app/download habits: only official app stores, checking permissions"], "activity": "Role-play in pairs: one person acts as a scammer attempting a social engineering trick, the other practices safely refusing and verifying \u2014 then swap roles.", "practice": "Share one cybersecurity tip learned this week with a family member or friend, and note their reaction.", "slides": [{"title": "Configuring Windows Security", "text": "Real-time Protection: Ensure the antivirus is always running in the background. Running a Scan: Use 'Quick Scan' for a daily check or 'Full Scan' for deep cleaning. Automatic Updates: Security definitions must be updated daily to recognize new threats."}, {"title": "The Power of Software Updates", "text": "Patching Vulnerabilities: Updates fix \"holes\" that hackers use to enter your system. Performance Boost: Beyond security, updates often make your software run faster and smoother. Never Delay: When you see an \"Update Available\" notification, act immediately. Check All Apps: Don't just update Windows; update your browsers and critical software too."}, {"title": "02. Network Safety", "text": "Navigating the web without leaving the door open"}, {"title": "Risks of Public Wi-Fi", "text": "Snooping Evil Twins MITM Attacks Hackers on the same network can \"listen in\" on your unencrypted data traffic. Scammers set up fake networks with names like \"Free_Airport_WiFi\" to steal login info. \"Man-in-the-Middle\" attacks allow hackers to redirect your traffic to fake bank sites."}, {"title": "Safer Alternatives", "text": "Mobile Data Hotspots: Using your own phone's data is significantly safer than any public network. VPN (Virtual Private Network): A VPN creates an encrypted \"tunnel\" for your data, making it unreadable to anyone on the local network. Habit: If you must use public Wi-Fi, never log into banks or email without a VPN active."}, {"title": "03. Social Engineering", "text": "When the hacker's target is your human emotions"}, {"title": "Beyond Phishing: The Scams", "text": "Vishing Smishing Impersonation Voice-based scams posing as bank officials or support agents. Urgent SMS messages containing malicious links or OTP requests. Pretending to be a boss, a family member in trouble, or \"tech support.\""}, {"title": "The 3 Red Flags of Social Engineering", "text": "Panic: Scammers want you to act before you think. !!! Secrecy: They often ask you not to tell anyone about the \"emergency.\" Unusual Payment: Requests for gift cards, wire transfers, or cryptocurrency are always scams. URGENCY The OTP Rule: Never share a One-Time Password with anyone, even if they claim to be from your bank."}, {"title": "Safe App & Download Habits", "text": "Stick to Official Stores Only download from the Google Play Store or Apple App Store. \"Side-loading\" apps from random websites often includes hidden malware. Check Permissions Ask yourself: Does a calculator app really need access to my contacts and camera? If not, deny the permission or delete the app."}, {"title": "Stay Safe Online", "text": "Practical Activity: Role-play a scam call scenario. Practice the \"Hang up, Look up, Call back\" rule. Questions? www.computertraining.com | support@training.com"}, {"title": "Image Sources", "text": "https://preview.redd.it/got-a-windows-defender-virus-detection-and-now-im-so-v0-vhq8n6czlnng1.jpg?width=640&crop=smart&auto=webp&s=28348f13854cc3d1727bc73d760ed0e28f02d715 Source: www.reddit.com https://us.norton.com/content/dam/blogs/images/norton/am/public-wifi-01.png Source: us.norton.com https://www.group-ib.com/wp-content/uploads/blog-image-without-title-1680x993-16.png Source: www.group-ib.com https://cdn.dribbble.com/userupload/16995476/file/original-a4ac1b636d88c435a29192374dd2b97c.png?resize=752x&vertical=center Source: dribbble.com"}]}, {"number": 24, "title": "Full Course Review & Exam Preparation", "objectives": ["Consolidate all five weeks of learning", "Identify and close any remaining knowledge gaps before assessment"], "topics": ["Rapid recap across all modules: Basics, Office, Design, Database, AI, Cybersecurity", "Open Q&A and troubleshooting clinic", "Walkthrough of the final assessment/project expectations"], "activity": "Work through a comprehensive practice quiz (see Appendix C) covering all five weeks, then review the answers as a class.", "practice": "Finish preparing your capstone project (see Day 25) and gather all portfolio files into one folder.", "slides": [{"title": "Weeks 1 & 2: Basics & Office", "text": "Week 1: Computer Basics Week 2: Microsoft Office Hardware & Systems: Distinguishing input, processing, and output. Navigating Windows directory hierarchies. Structured Documents: Design and alignment within Word tables, building standard professional resumes. Key Habits: Mastery of primary touch-typing workflows, active folder structural logic, and professional browser communications. Dynamic Spreadsheets: Managing cells, absolute/relative coordinates, and drafting active worksheets."}, {"title": "Weeks 3 & 4: Design & Database", "text": "Graphics Design Data Systems AI Productivity Visual balance, color hierarchies, custom typographic layouts. Delivering brand identifiers via CorelDRAW and Canva formats. Relational databases via Microsoft Access. Designing clean schema fields, executing logic queries, and generating print reports. Constructing contextual prompts, analyzing output boundaries, and utilizing tools as creative project accelerators."}, {"title": "Week 5: Cybersecurity Safety", "text": "Endpoint Configuration: Running scheduled security sweeps and managing active software patches. Network Containment: Recognizing evil twin routers and applying VPN encryption tools. Social Engineering: Refusing unexpected OTP requests and hanging up on high-urgency caller scenarios."}, {"title": "02. Final Capstone Guidelines", "text": "Synthesizing five key course concepts into a single small business starter showcase."}, {"title": "Capstone Deliverables Timeline", "text": "2. Financial Grid 4. Safety Plan Construct an Excel business budget using functioning formulas. Document account recovery procedures and safe AI patterns. 1. Core Identity 3. Data Table Develop a professional CV and brand design logo using Canva. Assemble an Access student register with filter query views."}, {"title": "Assessment Scoring Rubric", "text": "| Evaluation Category | Specific Performance Deliverable | Target Weight | | Completeness | All six essential database, design, and file artifacts saved cleanly | 30 Points | | Technical Grace | Operational Excel equations, logic blocks, and Access sorting paths | 25 Points | | Layout Quality | Appropriate element balancing, typography choices, and colors | 20 Points | | Presentational Drive | Structured live demonstration executed in under 5 minutes | 15 Points | | System Security | Verification of clean files, active backups, and safety procedures | 10 Points |"}, {"title": "Grade Distribution Breakdown", "text": "60% Holistic Assessment Model We prioritize continuous practical capabilities over high-stress academic testing. As outlined in the grading standard inside Computer_Training_Manual.docx, evaluations combine: Course Pass Mark In-Class Activities: Regular hands-on metrics (40%) Weekly Quizzes: Concept review checkpoints (30%) Capstone Project: Final portfolio showcase (30%)"}, {"title": "03. Troubleshooting & Clinic", "text": "Addressing common structural blocks, syntax details, and structural file preservation rules."}, {"title": "Overcoming Key Stumbling Blocks", "text": "Formula Prefix Constraints: Ensure every single calculation contains a starting character, or Excel treats the instruction as raw string text. Database Key Safety: Maintain a clear Primary Key field in Access tables to ensure records remain distinct and links do not break. System Directory Structures: Establish a neat multi-folder hierarchy under \"My Training\" to keep your showcase deliverables clean and organized. Typography Discipline: Prevent presentation crowding. Adhere strictly to a maximum of 2 complementary fonts and 3 visual colors."}, {"title": "Ready for Day 25?", "text": "Take time to review the review prompts and templates located within your copy of Computer_Training_Manual.docx. FINALIZE YOUR WORK DIRECTORY | COMMENCE TESTING"}, {"title": "Image Sources", "text": "https://www.apa.org/images/2021-01-trends-classrooms-tile_tcm7-334427.jpg Source: www.apa.org"}]}, {"number": 25, "title": "Capstone Project, Presentations & Certification", "objectives": ["Demonstrate integrated skills across all five modules in one project", "Present your work confidently to a group", "Receive course completion feedback/certificate"], "topics": ["Capstone brief: assemble a small 'personal brand' or 'small business starter pack' containing \u2014 a CV or business profile (Word), a budget or stock sheet (Excel), a flyer/logo (Design), a simple contact-list database (Access), one AI-assisted document, and a short note on how you'll keep your accounts secure", "Final presentations: each trainee presents their pack in 3\u20135 minutes"], "activity": "Capstone showcase and closing ceremony \u2014 instructor and peers give brief feedback; certificates of completion are issued.", "practice": "None \u2014 course complete. Keep practicing and revisit this manual as a reference.", "slides": []}]}], "appendices": {"glossary": [{"term": "Hardware", "def": "The physical parts of a computer (monitor, keyboard, CPU, mouse)."}, {"term": "Software", "def": "Programs and applications that run on hardware (Windows, Word, a browser)."}, {"term": "Operating System (OS)", "def": "The core software that manages a computer's hardware and runs other programs (e.g., Windows, macOS)."}, {"term": "File / Folder", "def": "A file is a single item of data (a document, photo); a folder organises related files together."}, {"term": "Cloud Storage", "def": "Saving files on remote internet servers (e.g., Google Drive, OneDrive) instead of only on one device."}, {"term": "Formula / Function (Excel)", "def": "An instruction starting with '=' that calculates a value, e.g., =SUM(A1:A5)."}, {"term": "Database", "def": "An organised collection of related data, structured into tables of records and fields."}, {"term": "Query", "def": "A saved question asked of a database to filter, sort, or calculate specific information."}, {"term": "Artificial Intelligence (AI)", "def": "Computer systems that perform tasks (like answering questions or recognising images) by learning patterns from data, rather than following only fixed instructions."}, {"term": "Prompt", "def": "The instruction or question typed to an AI assistant to get a useful response."}, {"term": "Phishing", "def": "A scam message designed to trick someone into revealing personal or financial information."}, {"term": "Two-Factor Authentication (2FA)", "def": "A login security step requiring a second proof of identity beyond just a password (e.g., a code sent to your phone)."}, {"term": "Malware", "def": "Malicious software designed to damage, disrupt, or gain unauthorised access to a device."}, {"term": "Vector Graphic", "def": "An image built from mathematical shapes/lines that can be resized without losing quality (used in CorelDRAW)."}, {"term": "Raster Graphic", "def": "An image made of pixels that loses quality when enlarged too much (used in Photoshop, e.g., .jpg/.png photos)."}], "shortcuts": ["Ctrl + S \u2014 Save the current file", "Ctrl + C / Ctrl + V \u2014 Copy / Paste", "Ctrl + X \u2014 Cut", "Ctrl + Z / Ctrl + Y \u2014 Undo / Redo", "Ctrl + A \u2014 Select all", "Ctrl + P \u2014 Print", "Ctrl + F \u2014 Find text on the page/document", "Ctrl + N \u2014 Open a new document/window", "Alt + Tab \u2014 Switch between open windows", "Ctrl + Alt + Delete \u2014 Open security/task options (lock PC, task manager)", "Windows key + D \u2014 Show the desktop", "Windows key + E \u2014 Open File Explorer"], "self_test": [{"week": "Week 1 \u2014 Computer Basics", "questions": ["Name three examples of computer hardware.", "What is the difference between hardware and software?", "Show how to create a new folder and rename it.", "What keyboard shortcut saves a document?"]}, {"week": "Week 2 \u2014 Microsoft Office", "questions": ["Which Excel formula would you use to add up a column of numbers?", "Name two ways to format text in Word.", "What is the purpose of a header/footer in a document?", "What is the difference between a transition and an animation in PowerPoint?"]}, {"week": "Week 3 \u2014 Graphics Design", "questions": ["What is the difference between a vector and a raster image?", "Name two design principles you learned this week.", "Why is it important to export a design in the correct file format?"]}, {"week": "Week 4 \u2014 Database & AI", "questions": ["What is the difference between a table's field and a record?", "What does a query do?", "Give one example of how AI could help with a work task, and one risk to watch for."]}, {"week": "Week 5 \u2014 Cybersecurity", "questions": ["List three warning signs of a phishing email.", "What is two-factor authentication and why does it help?", "What should you do if a caller asks for your password or a one-time code?"]}], "checklist": ["A CV or personal/business profile (Word)", "A budget or stock spreadsheet with at least one formula and one chart (Excel)", "A flyer or logo you designed (Canva/CorelDRAW/Photoshop)", "A simple contact-list or records database (Access)", "One document you created with AI assistance, that you then edited yourself", "A short written note on how you will keep your own accounts and data secure", "A 3\u20135 minute presentation of your work, ready to deliver to the group"]}}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('site-data').textContent);
+const WEEK_COLORS = ['#3FDDC0','#F5B942','#FF8FB1','#8C9EFF','#FF6B6B'];
+
+/* ---------- progress storage (namespaced per signed-in user) ---------- */
+function storageKey(base){ return base + '__' + (CURRENT_USERNAME || 'anon'); }
+function getProgress(){ try{ return JSON.parse(localStorage.getItem(storageKey('compeller_learning_academy_progress_v1'))) || {}; }catch(e){ return {}; } }
+function setProgress(p){ localStorage.setItem(storageKey('compeller_learning_academy_progress_v1'), JSON.stringify(p)); }
+function isDayDone(n){ return !!getProgress()['day'+n]; }
+function toggleDayDone(n){ const p=getProgress(); p['day'+n] = !p['day'+n]; setProgress(p); renderProgress(); }
+
+function getChecklist(){ try{ return JSON.parse(localStorage.getItem(storageKey('compeller_learning_academy_checklist_v1'))) || {}; }catch(e){ return {}; } }
+function setChecklist(c){ localStorage.setItem(storageKey('compeller_learning_academy_checklist_v1'), JSON.stringify(c)); }
+
+function totalDays(){ return DATA.weeks.reduce((a,w)=>a+w.days.length,0); }
+function doneDays(){ const p=getProgress(); return Object.values(p).filter(Boolean).length; }
+function renderProgress(){
+  const t=totalDays(), d=doneDays();
+  const pct = t? Math.round(d/t*100):0;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+  buildNav(); // refresh checkmarks
+  markActiveNav();
+}
+
+/* ---------- routing ---------- */
+function currentRoute(){
+  const h = location.hash.replace('#/','').trim();
+  return h || 'home';
+}
+window.addEventListener('hashchange', render);
+
+/* ---------- nav build ---------- */
+function buildNav(){
+  const nav = document.getElementById('navtree');
+  const openWeeks = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
+  let html = `<a class="nav-item" data-route="home"><span class="ic">⌂</span> Home</a>
+              <a class="nav-item" data-route="schedule"><span class="ic">▦</span> Schedule at a Glance</a>
+              <div class="nav-section-title">Programme</div>`;
+  DATA.weeks.forEach((w,i)=>{
+    const color = WEEK_COLORS[i%WEEK_COLORS.length];
+    const isOpen = openWeeks.includes(w.number) || location.hash.includes('week-'+w.number) || location.hash.includes('day-');
+    html += `<div class="week-group ${isOpen?'open':''}" data-week="${w.number}">
+      <div class="week-head" data-route="week-${w.number}">
+        <span class="week-dot" style="background:${color}"></span>
+        Week ${w.number}
+        <span class="week-num">${w.days.length} days</span>
+        <span class="week-chevron">▸</span>
+      </div>
+      <div class="week-days">`;
+    w.days.forEach(d=>{
+      const done = isDayDone(d.number);
+      html += `<a class="day-link" data-route="day-${d.number}">
+        <span class="day-check ${done?'done':''}"></span>
+        <span class="day-num">${String(d.number).padStart(2,'0')}</span>
+        <span>${d.title}</span>
+      </a>`;
+    });
+    html += `</div></div>`;
+  });
+  nav.innerHTML = html;
+
+  nav.querySelectorAll('[data-route]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      const route = el.getAttribute('data-route');
+      if(el.classList.contains('week-head')){
+        const grp = el.closest('.week-group');
+        grp.classList.toggle('open');
+        const wk = parseInt(grp.getAttribute('data-week'));
+        let ow = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
+        if(grp.classList.contains('open')){ if(!ow.includes(wk)) ow.push(wk); } else { ow = ow.filter(x=>x!==wk); }
+        sessionStorage.setItem('openWeeks', JSON.stringify(ow));
+      }
+      location.hash = '#/'+route;
+      closeSidebarMobile();
+    });
+  });
+}
+
+function markActiveNav(){
+  document.querySelectorAll('.nav-item, .day-link, .week-head').forEach(el=>el.classList.remove('active'));
+  const route = currentRoute();
+  const el = document.querySelector(`[data-route="${route}"]`);
+  if(el) el.classList.add('active');
+}
+
+/* ---------- mobile sidebar ---------- */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+document.getElementById('hamburger').addEventListener('click', ()=>{
+  sidebar.classList.add('open'); overlay.classList.add('show');
+});
+overlay.addEventListener('click', closeSidebarMobile);
+function closeSidebarMobile(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+
+/* ---------- helpers ---------- */
+function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function findDay(num){
+  for(const w of DATA.weeks){ const d = w.days.find(x=>x.number===num); if(d) return {day:d, week:w}; }
+  return null;
+}
+function weekColor(weekNumber){ return WEEK_COLORS[(weekNumber-1)%WEEK_COLORS.length]; }
+function hexToRgba(hex,a){
+  const h = hex.replace('#','');
+  const r=parseInt(h.substring(0,2),16), g=parseInt(h.substring(2,4),16), b=parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ---------- page renderers ---------- */
+function renderHome(){
+  const f = DATA.front;
+  const t = totalDays();
+  main.innerHTML = `
+    <div class="hero">
+      <div class="hero-tag">7-Week Intensive · Computer Training Programme</div>
+      <h1>Training Manual</h1>
+      <p>${esc(f.welcome.split('\\n\\n')[0])}</p>
+      <div class="hero-meta">
+        <span><b>${t}</b> training days</span>
+        <span><b>5</b> modules</span>
+        <span><b>Cohort:</b> 3rd Aug – 4th Sep, 2026</span>
+      </div>
+      <a class="hero-cta" href="#/day-1">Start Day 1 →</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">${t}</div><div class="l">Total training days</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">Weeks / modules</div></div>
+      <div class="stat"><div class="n">1–2h</div><div class="l">Per session</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">Capstone project</div></div>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">◆</span> Welcome</h2>
+      ${f.welcome.split('\\n\\n').map(p=>`<p style="color:var(--text-dim); font-size:14.5px; margin:0 0 12px;">${esc(p)}</p>`).join('')}
+    </div>
+
+    <div class="two-col section-gap">
+      <div class="card">
+        <h2 class="h"><span class="h-ic">✓</span> What You'll Achieve</h2>
+        <ul class="plain">${f.achieve.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      </div>
+      <div class="card">
+        <h2 class="h"><span class="h-ic">▣</span> What to Bring Each Day</h2>
+        <ul class="plain">${f.bring.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      </div>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">%</span> How You'll Be Assessed</h2>
+      <p style="color:var(--text-dim); font-size:14.5px; margin:0 0 14px;">${esc(f.assess_intro)}</p>
+      <ul class="plain">${f.assess_items.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      <p style="color:var(--text-dim); font-size:13.5px; margin:14px 0 0; padding-top:14px; border-top:1px solid var(--line);">${esc(f.assess_cert)}</p>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">▦</span> 5-Week Schedule at a Glance</h2>
+      ${scheduleTable()}
+    </div>
+
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function scheduleTable(){
+  const rows = DATA.front.schedule.map((r,i)=>{
+    const c = weekColor(i+1);
+    return `<tr>
+      <td class="wk" style="color:${c}">Week ${esc(r[0])}</td>
+      <td>${esc(r[1])}</td>
+      <td style="color:var(--text-dim)">${esc(r[2])}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="sched"><thead><tr><th>Week</th><th>Module</th><th>Focus</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderSchedule(){
+  main.innerHTML = `
+    <div class="eyebrow">Overview</div>
+    <h1 class="page-title">5-Week Schedule at a Glance</h1>
+    <p class="lede">The full programme, module by module. Click into any week from the sidebar for day-by-day detail.</p>
+    <div class="card">${scheduleTable()}</div>
+    <div class="day-grid section-gap">
+      ${DATA.weeks.map(w=>weekMiniCard(w)).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  main.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click', ()=>{ location.hash='#/'+el.getAttribute('data-goto'); }));
+}
+
+function weekMiniCard(w){
+  const c = weekColor(w.number);
+  return `<a class="day-card" data-goto="week-${w.number}" style="border-left:3px solid ${c}">
+    <div class="day-card-top">
+      <span class="day-badge" style="background:${c}">WEEK ${w.number}</span>
+      <h3>${esc(w.title)}</h3>
+    </div>
+    <p class="desc">${esc(w.intro)}</p>
+    <div class="day-card-meta"><span>${w.days.length} sessions</span><span>Days ${w.days[0].number}–${w.days[w.days.length-1].number}</span></div>
+  </a>`;
+}
+
+function renderWeek(num){
+  const w = DATA.weeks.find(x=>x.number===num);
+  if(!w){ renderHome(); return; }
+  const c = weekColor(num);
+  main.innerHTML = `
+    <div class="eyebrow">Week ${w.number} of 5 <span class="sep">/</span> Programme</div>
+    <div class="week-banner" style="background:linear-gradient(135deg, ${hexToRgba(c,0.16)}, var(--panel)); border-color:${hexToRgba(c,0.35)}">
+      <div class="wk-eyebrow" style="color:${c}">Week ${w.number}</div>
+      <h1>${esc(w.title)}</h1>
+      <p>${esc(w.intro)}</p>
+    </div>
+    <div class="day-grid">
+      ${w.days.map(d=>dayCard(d,w)).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  main.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click', ()=>{ location.hash='#/'+el.getAttribute('data-goto'); }));
+}
+
+function dayCard(d,w){
+  const c = weekColor(w.number);
+  const done = isDayDone(d.number);
+  return `<a class="day-card" data-goto="day-${d.number}" style="border-left:3px solid ${c}">
+    <div class="day-card-top">
+      <span class="day-badge" style="background:${c}">DAY ${d.number}</span>
+      <h3>${esc(d.title)}</h3>
+      ${done?'<span style="margin-left:auto; color:var(--teal); font-size:12px; font-family:var(--font-mono)">✓ done</span>':''}
+    </div>
+    <p class="desc">${esc((d.topics&&d.topics[0])||'')}</p>
+    <div class="day-card-meta"><span>${d.objectives.length} objectives</span><span>${d.topics.length} topics</span></div>
+  </a>`;
+}
+
+function renderDay(num){
+  const found = findDay(num);
+  if(!found){ renderHome(); return; }
+  const {day:d, week:w} = found;
+  const c = weekColor(w.number);
+  const done = isDayDone(d.number);
+
+  // prev/next across whole programme
+  const allDays = DATA.weeks.flatMap(w2=>w2.days.map(dd=>({...dd, weekNum:w2.number})));
+  const idx = allDays.findIndex(x=>x.number===d.number);
+  const prev = idx>0? allDays[idx-1]: null;
+  const next = idx<allDays.length-1? allDays[idx+1]: null;
+
+  const slidesHtml = (d.slides && d.slides.length)? `
+    <h2 class="h section-gap"><span class="h-ic">▶</span> Walk Through the Slides</h2>
+    <p style="color:var(--text-dim); font-size:13.5px; margin-top:-8px; margin-bottom:16px;">A quick look at what's on each slide from this session's deck.</p>
+    ${d.slides.map(s=>`<details class="slides"><summary>${esc(s.title)}</summary><p>${esc(s.text)}</p></details>`).join('')}
+  ` : '';
+
+  main.innerHTML = `
+    <div class="eyebrow"><a href="#/week-${w.number}" style="color:${c}; text-decoration:none;">Week ${w.number} — ${esc(w.title)}</a><span class="sep">/</span> Day ${d.number}</div>
+
+    <div class="day-hero" style="background:linear-gradient(135deg, ${hexToRgba(c,0.2)}, var(--panel)); border-color:${hexToRgba(c,0.35)}">
+      <div class="wk-eyebrow" style="color:${c}">Day ${d.number} · Week ${w.number}</div>
+      <h1>${esc(d.title)}</h1>
+      <div class="dur">⏱ Session length: 1–2 hours</div>
+      <div class="complete-toggle ${done?'done':''}" id="complete-btn" style="color:${c}">
+        <span class="box"></span> ${done? "Marked complete":"Mark this day complete"}
+      </div>
+    </div>
+
+    <h2 class="h"><span class="h-ic">✓</span> What You'll Be Able To Do</h2>
+    <ul class="obj-list">
+      ${d.objectives.map((o,i)=>`<li><span class="n">${i+1}</span><span>${esc(o)}</span></li>`).join('')}
+    </ul>
+
+    <h2 class="h section-gap"><span class="h-ic">☰</span> Topics Covered</h2>
+    <div class="topic-tags">${d.topics.map(t=>`<span class="topic-tag">${esc(t)}</span>`).join('')}</div>
+
+    <div class="two-col section-gap">
+      <div class="activity-card act">
+        <span class="tag">In-Class Activity</span>
+        <p>${esc(d.activity)}</p>
+      </div>
+      <div class="activity-card prac">
+        <span class="tag">Practice Before Next Session</span>
+        <p>${esc(d.practice || 'None — enjoy a well-earned break.')}</p>
+      </div>
+    </div>
+
+    ${slidesHtml}
+
+    <div class="day-nav">
+      ${prev? `<a class="prev" href="#/day-${prev.number}"><div class="lbl">← Day ${prev.number}</div>${esc(prev.title)}</a>` : '<div></div>'}
+      ${next? `<a class="next" href="#/day-${next.number}"><div class="lbl">Day ${next.number} →</div>${esc(next.title)}</a>` : '<div></div>'}
+    </div>
+
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+
+  document.getElementById('complete-btn').addEventListener('click', ()=>{
+    toggleDayDone(d.number);
+    renderDay(num);
+  });
+}
+
+function renderGlossary(){
+  const items = DATA.appendices.glossary;
+  main.innerHTML = `
+    <div class="eyebrow">Appendix A</div>
+    <h1 class="page-title">Glossary of Key Terms</h1>
+    <p class="lede">Quick definitions for words used throughout the programme.</p>
+    <input class="glossary-search" id="gloss-search" placeholder="Search terms… e.g. phishing, database, cloud">
+    <dl id="gloss-list"></dl>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  function draw(filter){
+    const f = (filter||'').toLowerCase();
+    const list = items.filter(it=> !f || it.term.toLowerCase().includes(f) || it.def.toLowerCase().includes(f));
+    document.getElementById('gloss-list').innerHTML = list.map(it=>`
+      <div class="gloss-item"><dt>${esc(it.term)}</dt><dd>${esc(it.def)}</dd></div>
+    `).join('') || `<p style="color:var(--text-dim)">No terms match “${esc(filter)}”.</p>`;
+  }
+  draw('');
+  document.getElementById('gloss-search').addEventListener('input', e=>draw(e.target.value));
+}
+
+function renderShortcuts(){
+  const items = DATA.appendices.shortcuts.map(s=>{
+    const [k, ...rest] = s.split(' — ');
+    return {k, what: rest.join(' — ')};
+  });
+  main.innerHTML = `
+    <div class="eyebrow">Appendix B</div>
+    <h1 class="page-title">Essential Keyboard Shortcuts</h1>
+    <p class="lede">Cheat sheet — keep this page open while you practice.</p>
+    <div class="shortcut-grid">
+      ${items.map(it=>`<div class="shortcut"><span class="kbd">${esc(it.k)}</span><span class="what">${esc(it.what)}</span></div>`).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function renderSelfTest(){
+  const groups = DATA.appendices.self_test;
+  main.innerHTML = `
+    <div class="eyebrow">Appendix C</div>
+    <h1 class="page-title">Self-Test Questions</h1>
+    <p class="lede">Use these to test yourself before each weekly review, or as revision before the final assessment.</p>
+    ${groups.map((g,i)=>`
+      <div class="test-week" style="border-left:3px solid ${weekColor(i+1)}; padding-left:16px;">
+        <h3 style="color:${weekColor(i+1)}">${esc(g.week)}</h3>
+        <ol>${g.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ol>
+      </div>
+    `).join('')}
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function renderChecklist(){
+  const items = DATA.appendices.checklist;
+  const state = getChecklist();
+  main.innerHTML = `
+    <div class="eyebrow">Appendix D</div>
+    <h1 class="page-title">My Capstone Project Checklist</h1>
+    <p class="lede">Your final capstone project (Day 25) should include all of the following. Check items off as you complete them — your progress is saved on this device.</p>
+    <ul class="checklist" id="checklist"></ul>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  function draw(){
+    const st = getChecklist();
+    document.getElementById('checklist').innerHTML = items.map((it,i)=>`
+      <li class="${st[i]?'done':''}" data-i="${i}"><span class="cbox"></span><span class="txt">${esc(it)}</span></li>
+    `).join('');
+    document.querySelectorAll('#checklist li').forEach(li=>{
+      li.addEventListener('click', ()=>{
+        const st2 = getChecklist();
+        const i = li.getAttribute('data-i');
+        st2[i] = !st2[i];
+        setChecklist(st2);
+        draw();
+      });
+    });
+  }
+  draw();
+}
+
+/* ---------- master render ---------- */
+const main = document.getElementById('main');
+function render(){
+  const route = currentRoute();
+  window.scrollTo(0,0);
+  if(route === 'home') renderHome();
+  else if(route === 'schedule') renderSchedule();
+  else if(route.startsWith('week-')) renderWeek(parseInt(route.split('-')[1]));
+  else if(route.startsWith('day-')) renderDay(parseInt(route.split('-')[1]));
+  else if(route === 'appendix-glossary') renderGlossary();
+  else if(route === 'appendix-shortcuts') renderShortcuts();
+  else if(route === 'appendix-selftest') renderSelfTest();
+  else if(route === 'appendix-checklist') renderChecklist();
+  else renderHome();
+  markActiveNav();
+}
+
+/* =========================================================
+   AUTH — username & password sign-in, powered by Supabase.
+   Fill in SUPABASE_URL and SUPABASE_ANON_KEY below (see
+   SETUP.md) before this login screen will work.
+   ========================================================= */
+const SUPABASE_URL = 'https://rlnbdsrujewnwqqrkaaf.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsbmJkc3J1amV3bndxcXJrYWFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2MTg1NjgsImV4cCI6MjEwMDE5NDU2OH0.YRjErN0htwO7Vukq4rYKzjaffvRNWsAtjfwGmRinNnE';
+const USERNAME_DOMAIN = '@compeller-learning-academy.local'; // internal only, students never see this
+
+let CURRENT_USERNAME = null;
+let supabaseClient = null;
+
+function usernameToEmail(u){ return u.trim().toLowerCase().replace(/\s+/g,'') + USERNAME_DOMAIN; }
+function emailToUsername(e){ return (e||'').split('@')[0]; }
+
+function showAuthError(msg){
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideAuthError(){
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+function showApp(user){
+  CURRENT_USERNAME = (user.user_metadata && user.user_metadata.username) || emailToUsername(user.email);
+  document.getElementById('sidebar-uname').textContent = CURRENT_USERNAME;
+  document.getElementById('sidebar-avatar').textContent = CURRENT_USERNAME.slice(0,1).toUpperCase();
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('show');
+  buildNav();
+  renderProgress();
+  render();
+}
+
+function showAuthScreen(){
+  CURRENT_USERNAME = null;
+  document.getElementById('app-shell').classList.remove('show');
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('auth-username').focus();
+}
+
+async function initAuth(){
+  if(!window.supabase || SUPABASE_URL.startsWith('YOUR_')){
+    showAuthError('This site is not connected to a login service yet. See SETUP.md.');
+    return;
+  }
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(session && session.user){ showApp(session.user); } else { showAuthScreen(); }
+
+  supabaseClient.auth.onAuthStateChange((event, session)=>{
+    if(event === 'SIGNED_OUT'){ showAuthScreen(); }
+  });
+
+  document.getElementById('auth-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    hideAuthError();
+    const username = document.getElementById('auth-username').value;
+    const password = document.getElementById('auth-password').value;
+    const btn = document.getElementById('auth-submit');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: usernameToEmail(username),
+      password
+    });
+    btn.disabled = false; btn.textContent = 'Sign in';
+    if(error){
+      showAuthError('Incorrect username or password. Please try again.');
+      return;
+    }
+    showApp(data.user);
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async ()=>{
+    await supabaseClient.auth.signOut();
+  });
+}
+
+initAuth();
+
+</script>
+</body>
+</html>
