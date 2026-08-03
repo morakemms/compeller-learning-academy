@@ -622,21 +622,29 @@ function buildNav(){
     html += `</div></div>`;
   });
   nav.innerHTML = html;
+}
 
-  nav.querySelectorAll('[data-route]').forEach(el=>{
-    el.addEventListener('click', (e)=>{
-      const route = el.getAttribute('data-route');
-      if(el.classList.contains('week-head')){
-        const grp = el.closest('.week-group');
-        grp.classList.toggle('open');
-        const wk = parseInt(grp.getAttribute('data-week'));
-        let ow = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
-        if(grp.classList.contains('open')){ if(!ow.includes(wk)) ow.push(wk); } else { ow = ow.filter(x=>x!==wk); }
-        sessionStorage.setItem('openWeeks', JSON.stringify(ow));
-      }
-      location.hash = '#/'+route;
-      closeSidebarMobile();
-    });
+/* Delegated click handling for ALL sidebar nav links, including the static
+   Reference links (Glossary/Shortcuts/Self-Test/Checklist) which live
+   outside #navtree and were previously never getting bound. */
+let sidebarNavBound = false;
+function bindSidebarNav(){
+  if(sidebarNavBound) return;
+  sidebarNavBound = true;
+  document.getElementById('sidebar').addEventListener('click', (e)=>{
+    const el = e.target.closest('[data-route]');
+    if(!el) return;
+    const route = el.getAttribute('data-route');
+    if(el.classList.contains('week-head')){
+      const grp = el.closest('.week-group');
+      grp.classList.toggle('open');
+      const wk = parseInt(grp.getAttribute('data-week'));
+      let ow = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
+      if(grp.classList.contains('open')){ if(!ow.includes(wk)) ow.push(wk); } else { ow = ow.filter(x=>x!==wk); }
+      sessionStorage.setItem('openWeeks', JSON.stringify(ow));
+    }
+    location.hash = '#/'+route;
+    closeSidebarMobile();
   });
 }
 
@@ -1047,6 +1055,7 @@ function showApp(user){
   document.getElementById('sidebar-avatar').textContent = CURRENT_USERNAME.slice(0,1).toUpperCase();
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('show');
+  bindSidebarNav();
   buildNav();
   renderProgress();
   render();
