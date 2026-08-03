@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compeller Learning Academy — Training Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --ink:#0B1220;
+  --ink-2:#111B30;
+  --panel:#152140;
+  --panel-2:#1B2A4D;
+  --line: rgba(148,168,214,0.16);
+  --line-strong: rgba(148,168,214,0.28);
+  --text:#E7ECF7;
+  --text-dim:#9BAAC7;
+  --text-faint:#6C7CA0;
+  --amber:#F5B942;
+  --amber-dim: rgba(245,185,66,0.14);
+  --teal:#3FDDC0;
+  --teal-dim: rgba(63,221,192,0.14);
+  --coral:#FF6B6B;
+  --w1:#3FDDC0;
+  --w2:#F5B942;
+  --w3:#FF8FB1;
+  --w4:#8C9EFF;
+  --w5:#FF6B6B;
+  --radius: 14px;
+  --font-display:'Space Grotesk', sans-serif;
+  --font-body:'Inter', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--ink);
+  color:var(--text);
+  font-family:var(--font-body);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--amber); color:#1a1200;}
+
+/* ---------- Layout shell ---------- */
+.app{
+  display:grid;
+  grid-template-columns: 300px 1fr;
+  min-height:100vh;
+}
+@media (max-width: 900px){
+  .app{grid-template-columns: 1fr;}
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background: linear-gradient(180deg, var(--ink-2), var(--ink) 60%);
+  border-right:1px solid var(--line);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  padding:22px 16px 40px;
+  z-index:40;
+}
+@media (max-width: 900px){
+  .sidebar{
+    position:fixed;
+    left:0; top:0;
+    width:82vw; max-width:340px;
+    transform:translateX(-100%);
+    transition:transform .28s ease;
+    box-shadow:20px 0 60px rgba(0,0,0,0.5);
+  }
+  .sidebar.open{transform:translateX(0);}
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  padding:6px 8px 18px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:14px;
+}
+.brand-mark{
+  width:38px; height:38px; border-radius:10px;
+  background: conic-gradient(from 220deg, var(--teal), var(--amber), var(--coral), var(--teal));
+  display:flex; align-items:center; justify-content:center;
+  flex:none;
+  position:relative;
+}
+.brand-mark::after{
+  content:"";
+  position:absolute; inset:3px;
+  border-radius:7px;
+  background:var(--ink-2);
+}
+.brand-mark svg{position:relative; z-index:1; width:20px; height:20px;}
+.brand-text{font-family:var(--font-display); line-height:1.15;}
+.brand-text .b1{font-size:13px; font-weight:700; letter-spacing:.02em;}
+.brand-text .b2{font-size:10.5px; color:var(--text-dim); font-family:var(--font-mono); letter-spacing:.04em;}
+
+.progress-wrap{margin:2px 8px 18px; padding:12px 12px 13px; background:var(--panel); border:1px solid var(--line); border-radius:12px;}
+.progress-label{display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-bottom:8px;}
+.progress-label b{color:var(--amber); font-weight:600;}
+.progress-track{height:6px; border-radius:6px; background:rgba(255,255,255,0.06); overflow:hidden;}
+.progress-fill{height:100%; background:linear-gradient(90deg, var(--teal), var(--amber)); border-radius:6px; transition:width .4s ease; width:0%;}
+
+nav.navtree{padding:0 4px;}
+.nav-item{
+  display:flex; align-items:center; gap:10px;
+  padding:9px 10px; border-radius:9px;
+  color:var(--text-dim); text-decoration:none;
+  font-size:13.5px; font-weight:500;
+  cursor:pointer;
+  transition:background .15s, color .15s;
+}
+.nav-item:hover{background:var(--panel); color:var(--text);}
+.nav-item.active{background:var(--panel-2); color:var(--text);}
+.nav-item .ic{width:16px; text-align:center; flex:none; opacity:.85;}
+
+.nav-section-title{
+  font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-faint);
+  padding:16px 10px 6px;
+}
+
+.week-group{margin-bottom:2px;}
+.week-head{
+  display:flex; align-items:center; gap:10px;
+  padding:10px; border-radius:9px; cursor:pointer;
+  color:var(--text); font-weight:600; font-size:13.5px;
+  font-family:var(--font-display);
+}
+.week-head:hover{background:var(--panel);}
+.week-dot{width:9px;height:9px;border-radius:50%;flex:none; box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
+.week-num{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-left:auto;}
+.week-chevron{transition:transform .2s ease; opacity:.6; font-size:10px;}
+.week-group.open .week-chevron{transform:rotate(90deg);}
+.week-days{
+  max-height:0; overflow:hidden; transition:max-height .25s ease;
+  padding-left:19px; border-left:1px solid var(--line); margin-left:19px;
+}
+.week-group.open .week-days{max-height:900px;}
+.day-link{
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; margin:1px 0; border-radius:7px;
+  color:var(--text-dim); text-decoration:none; font-size:12.8px;
+  cursor:pointer;
+}
+.day-link:hover{background:var(--panel); color:var(--text);}
+.day-link.active{background:var(--panel-2); color:var(--amber);}
+.day-check{
+  width:14px; height:14px; border-radius:4px; flex:none;
+  border:1.4px solid var(--line-strong);
+  display:flex; align-items:center; justify-content:center;
+}
+.day-check.done{background:var(--teal); border-color:var(--teal);}
+.day-check.done::after{content:"✓"; font-size:9px; color:#06231d; font-weight:700;}
+.day-num{font-family:var(--font-mono); color:var(--text-faint); font-size:11px; width:16px; flex:none;}
+
+/* ---------- Mobile top bar ---------- */
+.topbar{
+  display:none;
+  position:sticky; top:0; z-index:30;
+  background:rgba(11,18,32,0.92); backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+  padding:12px 16px; align-items:center; gap:12px;
+}
+@media (max-width:900px){.topbar{display:flex;}}
+.hamburger{
+  width:34px; height:34px; border-radius:8px; background:var(--panel);
+  border:1px solid var(--line); color:var(--text); display:flex;
+  align-items:center; justify-content:center; cursor:pointer; flex:none;
+}
+.topbar .brand-text .b1{font-size:12.5px;}
+.overlay{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:35;
+}
+.overlay.show{display:block;}
+
+/* ---------- Main content ---------- */
+main{padding:48px 56px 100px; max-width:920px;}
+@media (max-width:900px){ main{padding:28px 20px 80px;} }
+
+.eyebrow{
+  font-family:var(--font-mono); font-size:11.5px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--teal); margin-bottom:10px;
+  display:flex; align-items:center; gap:8px;
+}
+.eyebrow .sep{color:var(--text-faint);}
+h1.page-title{
+  font-family:var(--font-display); font-weight:700; font-size:38px;
+  line-height:1.12; margin:0 0 14px; letter-spacing:-.01em;
+}
+@media (max-width:600px){ h1.page-title{font-size:28px;} }
+.lede{font-size:16.5px; color:var(--text-dim); max-width:66ch; margin:0 0 30px;}
+
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 26px;
+}
+.section-gap{margin-top:34px;}
+
+/* Home hero */
+.hero{
+  position:relative; border-radius:20px; overflow:hidden;
+  background: radial-gradient(120% 140% at 15% 0%, #1c2c52 0%, #101a30 55%, #0b1220 100%);
+  border:1px solid var(--line);
+  padding:46px 40px;
+  margin-bottom:8px;
+}
+@media (max-width:600px){.hero{padding:30px 22px;}}
+.hero-tag{font-family:var(--font-mono); font-size:12px; color:var(--amber); letter-spacing:.08em; text-transform:uppercase; margin-bottom:16px;}
+.hero h1{font-family:var(--font-display); font-size:44px; line-height:1.08; margin:0 0 16px; max-width:14ch; letter-spacing:-.015em;}
+@media (max-width:600px){.hero h1{font-size:30px;}}
+.hero p{font-size:16px; color:var(--text-dim); max-width:58ch; margin:0 0 26px;}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px 28px; font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim); margin-bottom:26px;}
+.hero-meta b{color:var(--text); font-weight:600;}
+.hero-cta{
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--amber); color:#241900; font-weight:700; font-family:var(--font-display);
+  padding:13px 22px; border-radius:10px; text-decoration:none; font-size:14.5px;
+  cursor:pointer; border:none;
+  box-shadow:0 8px 24px rgba(245,185,66,0.18);
+}
+.hero-cta:hover{filter:brightness(1.06);}
+
+.trace{
+  position:absolute; right:-40px; top:-40px; width:340px; height:340px; opacity:.5;
+  pointer-events:none;
+}
+
+/* Stat grid */
+.stat-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:34px 0;}
+@media (max-width:750px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:18px 18px;}
+.stat .n{font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--amber);}
+.stat .l{font-size:12px; color:var(--text-dim); margin-top:4px;}
+
+h2.h{font-family:var(--font-display); font-size:22px; font-weight:600; margin:0 0 16px; display:flex; align-items:center; gap:10px;}
+h2.h .h-ic{color:var(--teal);}
+
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+@media (max-width:750px){.two-col{grid-template-columns:1fr;}}
+
+ul.plain{list-style:none; margin:0; padding:0;}
+ul.plain li{
+  position:relative; padding:8px 0 8px 24px; font-size:14.5px; color:var(--text); border-bottom:1px solid var(--line);
+}
+ul.plain li:last-child{border-bottom:none;}
+ul.plain li::before{content:"→"; position:absolute; left:0; color:var(--teal); font-family:var(--font-mono);}
+
+table.sched{width:100%; border-collapse:collapse; margin-top:10px;}
+table.sched th{
+  text-align:left; font-family:var(--font-mono); font-size:11px; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--text-faint); padding:8px 12px; border-bottom:1px solid var(--line-strong);
+}
+table.sched td{padding:14px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:top;}
+table.sched td.wk{font-family:var(--font-display); font-weight:700; color:var(--amber); white-space:nowrap;}
+table.sched tr:last-child td{border-bottom:none;}
+
+/* Week page */
+.week-banner{
+  border-radius:16px; padding:34px 36px; margin-bottom:30px; border:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.week-banner .wk-eyebrow{font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; opacity:.9; margin-bottom:10px;}
+.week-banner h1{font-family:var(--font-display); font-size:32px; margin:0 0 12px;}
+.week-banner p{max-width:64ch; opacity:.92; font-size:15px; margin:0;}
+
+.day-grid{display:grid; grid-template-columns:1fr; gap:14px;}
+.day-card{
+  background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+  cursor:pointer; text-decoration:none; color:inherit; display:block;
+  transition:border-color .15s, transform .15s;
+}
+.day-card:hover{border-color:var(--line-strong); transform:translateY(-1px);}
+.day-card-top{display:flex; align-items:center; gap:12px; margin-bottom:8px;}
+.day-badge{
+  font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--ink);
+  background:var(--amber); padding:4px 9px; border-radius:6px; flex:none;
+}
+.day-card h3{font-family:var(--font-display); font-size:17px; margin:0; font-weight:600;}
+.day-card .desc{color:var(--text-dim); font-size:13.5px; margin:0;}
+.day-card-meta{display:flex; gap:14px; margin-top:12px; font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint);}
+
+/* Day page */
+.day-hero{
+  border-radius:16px; padding:32px 34px; margin-bottom:28px; border:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.day-hero .wk-eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; opacity:.85; margin-bottom:12px;}
+.day-hero h1{font-family:var(--font-display); font-size:30px; margin:0 0 8px;}
+@media (max-width:600px){.day-hero h1{font-size:23px;}}
+.day-hero .dur{font-family:var(--font-mono); font-size:12px; opacity:.85;}
+
+.complete-toggle{
+  display:inline-flex; align-items:center; gap:10px; margin-top:20px;
+  background:rgba(0,0,0,0.18); border:1px solid rgba(255,255,255,0.22);
+  padding:10px 16px; border-radius:10px; cursor:pointer; font-size:13.5px; font-weight:600;
+  color:inherit;
+}
+.complete-toggle .box{width:18px; height:18px; border-radius:5px; border:1.6px solid currentColor; display:flex; align-items:center; justify-content:center; flex:none;}
+.complete-toggle.done .box{background:currentColor;}
+.complete-toggle.done .box::after{content:"✓"; font-size:11px;}
+
+.obj-list{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+.obj-list li{
+  display:flex; gap:12px; align-items:flex-start; font-size:14.5px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+}
+.obj-list li .n{
+  font-family:var(--font-mono); font-size:11px; color:var(--ink); background:var(--teal);
+  width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; font-weight:700;
+}
+
+.topic-tags{display:flex; flex-wrap:wrap; gap:9px;}
+.topic-tag{
+  background:var(--panel-2); border:1px solid var(--line); color:var(--text);
+  padding:9px 13px; border-radius:9px; font-size:13.5px; line-height:1.4;
+}
+
+.activity-card{border-radius:12px; padding:20px 22px; border:1px solid var(--line);}
+.activity-card .tag{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; display:inline-block; padding:3px 9px; border-radius:6px;}
+.activity-card p{margin:0; font-size:14.5px;}
+.activity-card.act{background:var(--teal-dim); border-color:rgba(63,221,192,0.3);}
+.activity-card.act .tag{background:var(--teal); color:#06231d;}
+.activity-card.prac{background:var(--amber-dim); border-color:rgba(245,185,66,0.3);}
+.activity-card.prac .tag{background:var(--amber); color:#241900;}
+
+.slide-gallery{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:16px;
+}
+.slide-frame{
+  margin:0; background:var(--ink-2); border:1px solid var(--line); border-radius:10px;
+  overflow:hidden; cursor:zoom-in; transition:border-color .15s, transform .15s;
+}
+.slide-frame:hover{border-color:var(--line-strong); transform:translateY(-2px);}
+.slide-frame img{width:100%; display:block; aspect-ratio:16/9; object-fit:cover; background:#000;}
+.slide-frame figcaption{
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint);
+  padding:7px 10px; border-top:1px solid var(--line);
+}
+#lightbox{
+  display:none; position:fixed; inset:0; z-index:100; background:rgba(5,8,16,0.92);
+  align-items:center; justify-content:center; padding:30px; backdrop-filter:blur(4px);
+}
+#lightbox.show{display:flex;}
+#lightbox img{max-width:92vw; max-height:86vh; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+#lightbox .lb-close{
+  position:absolute; top:20px; right:26px; width:40px; height:40px; border-radius:50%;
+  background:var(--panel); border:1px solid var(--line-strong); color:var(--text);
+  font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+#lightbox .lb-nav{
+  position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%;
+  background:var(--panel); border:1px solid var(--line-strong); color:var(--text);
+  font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+#lightbox .lb-prev{left:20px;}
+#lightbox .lb-next{right:20px;}
+#lightbox .lb-caption{
+  position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+  font-family:var(--font-mono); font-size:12px; color:var(--text-dim); background:rgba(0,0,0,0.5);
+  padding:6px 14px; border-radius:20px;
+}
+
+.day-nav{display:flex; justify-content:space-between; gap:14px; margin-top:38px; padding-top:24px; border-top:1px solid var(--line);}
+.day-nav a{
+  flex:1; text-decoration:none; color:var(--text); border:1px solid var(--line); border-radius:12px;
+  padding:14px 16px; font-size:13px; display:block;
+}
+.day-nav a:hover{border-color:var(--line-strong); background:var(--panel);}
+.day-nav a .lbl{font-family:var(--font-mono); color:var(--text-faint); font-size:10.5px; text-transform:uppercase; margin-bottom:4px;}
+.day-nav a.next{text-align:right;}
+
+/* Appendix pages */
+.glossary-search{
+  width:100%; background:var(--panel); border:1px solid var(--line); border-radius:10px;
+  padding:12px 16px; color:var(--text); font-size:14px; font-family:var(--font-body); margin-bottom:20px;
+}
+.glossary-search:focus{outline:none; border-color:var(--teal);}
+.gloss-item{padding:16px 0; border-bottom:1px solid var(--line);}
+.gloss-item dt{font-family:var(--font-display); font-weight:600; font-size:15.5px; color:var(--amber); margin-bottom:4px;}
+.gloss-item dd{margin:0; color:var(--text-dim); font-size:14px;}
+
+.shortcut-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+@media (max-width:600px){.shortcut-grid{grid-template-columns:1fr;}}
+.shortcut{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px;
+}
+.kbd{font-family:var(--font-mono); font-size:12.5px; background:var(--panel-2); border:1px solid var(--line-strong); border-bottom-width:2px; padding:4px 9px; border-radius:6px; color:var(--teal);}
+.shortcut .what{font-size:13.5px; color:var(--text-dim); text-align:right;}
+
+.test-week{margin-bottom:26px;}
+.test-week h3{font-family:var(--font-display); font-size:16px; color:var(--w1); margin:0 0 10px;}
+.test-week ol{margin:0; padding-left:20px;}
+.test-week li{padding:6px 0; font-size:14.5px; color:var(--text);}
+
+.checklist{list-style:none; margin:0; padding:0; display:grid; gap:10px;}
+.checklist li{
+  display:flex; gap:12px; align-items:flex-start; background:var(--ink-2); border:1px solid var(--line);
+  border-radius:10px; padding:13px 15px; cursor:pointer; font-size:14.5px;
+}
+.checklist .cbox{width:19px; height:19px; border-radius:5px; border:1.6px solid var(--line-strong); flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center;}
+.checklist li.done .cbox{background:var(--teal); border-color:var(--teal);}
+.checklist li.done .cbox::after{content:"✓"; font-size:11px; color:#06231d; font-weight:700;}
+.checklist li.done span.txt{color:var(--text-dim); text-decoration:line-through;}
+
+footer.pagefoot{margin-top:60px; padding-top:24px; border-top:1px solid var(--line); color:var(--text-faint); font-size:12.5px; font-family:var(--font-mono);}
+
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.pill{font-family:var(--font-mono); font-size:11px; padding:5px 11px; border-radius:20px; border:1px solid var(--line-strong); color:var(--text-dim);}
+
+a.plain-link{color:var(--teal);}
+
+/* ---------- Auth / login gate ---------- */
+#auth-screen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; background:
+    radial-gradient(120% 100% at 20% 0%, #1c2c52 0%, #101a30 45%, #0b1220 100%);
+}
+.auth-card{
+  width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line);
+  border-radius:18px; padding:36px 32px; box-shadow:0 30px 80px rgba(0,0,0,0.4);
+}
+.auth-brand{display:flex; align-items:center; gap:12px; margin-bottom:26px;}
+.auth-brand .brand-mark{width:42px;height:42px;}
+.auth-brand .brand-mark svg{width:22px;height:22px;}
+.auth-title{font-family:var(--font-display); font-weight:700; font-size:21px; margin:0 0 6px;}
+.auth-sub{color:var(--text-dim); font-size:13.5px; margin:0 0 24px;}
+.auth-field{margin-bottom:16px;}
+.auth-field label{display:block; font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); margin-bottom:7px;}
+.auth-field input{
+  width:100%; background:var(--ink-2); border:1px solid var(--line-strong); border-radius:9px;
+  padding:12px 14px; color:var(--text); font-size:14.5px; font-family:var(--font-body);
+}
+.auth-field input:focus{outline:none; border-color:var(--teal);}
+.auth-submit{
+  width:100%; background:var(--amber); color:#241900; font-weight:700; font-family:var(--font-display);
+  border:none; padding:13px; border-radius:10px; font-size:14.5px; cursor:pointer; margin-top:4px;
+}
+.auth-submit:hover{filter:brightness(1.06);}
+.auth-submit:disabled{opacity:.6; cursor:default;}
+.auth-error{
+  background:rgba(255,107,107,0.12); border:1px solid rgba(255,107,107,0.35); color:#ffb3b3;
+  font-size:13px; padding:10px 13px; border-radius:8px; margin-bottom:16px; display:none;
+}
+.auth-error.show{display:block;}
+.auth-footnote{color:var(--text-faint); font-size:12px; margin-top:20px; text-align:center;}
+
+#app-shell{display:none;}
+#app-shell.show{display:block;}
+
+.sidebar-user{
+  display:flex; align-items:center; gap:9px; padding:10px; margin:0 8px 14px;
+  background:var(--ink-2); border:1px solid var(--line); border-radius:10px;
+}
+.sidebar-user .avatar{
+  width:28px; height:28px; border-radius:50%; background:var(--teal-dim); color:var(--teal);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-display);
+  font-weight:700; font-size:12px; flex:none;
+}
+.sidebar-user .uname{font-size:12.5px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.sidebar-user .logout-btn{
+  margin-left:auto; background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:11px;
+  font-family:var(--font-mono); flex:none;
+}
+.sidebar-user .logout-btn:hover{color:var(--coral);}
+
+</style>
+</head>
+<body>
+
+<!-- ===== Login gate ===== -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="2" stroke="#0B1220" stroke-width="1.6"/><path d="M8 20h8M12 16v4" stroke="#0B1220" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text"><div class="b1">Compeller Learning Academy</div><div class="b2">TRAINING MANUAL</div></div>
+    </div>
+    <h1 class="auth-title">Sign in</h1>
+    <p class="auth-sub">Use the username and password your instructor gave you.</p>
+    <div class="auth-error" id="auth-error"></div>
+    <form id="auth-form">
+      <div class="auth-field">
+        <label for="auth-username">Username</label>
+        <input id="auth-username" type="text" autocomplete="username" required>
+      </div>
+      <div class="auth-field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="auth-submit" id="auth-submit" type="submit">Sign in</button>
+    </form>
+    <p class="auth-footnote">Forgot your password? Ask your instructor to reset it.</p>
+  </div>
+</div>
+
+<!-- ===== App (hidden until signed in) ===== -->
+<div id="app-shell">
+
+<div class="overlay" id="overlay"></div>
+
+<div class="topbar">
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <div class="brand-text"><div class="b1">Compeller Learning Academy</div><div class="b2">TRAINING MANUAL</div></div>
+</div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="12" rx="2" stroke="#0B1220" stroke-width="1.6"/><path d="M8 20h8M12 16v4" stroke="#0B1220" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="b1">Compeller Learning Academy</div>
+        <div class="b2">TRAINING MANUAL</div>
+      </div>
+    </div>
+
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="avatar" id="sidebar-avatar">?</div>
+      <div class="uname" id="sidebar-uname"></div>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Your progress</span><b id="progress-pct">0%</b></div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <nav class="navtree" id="navtree"></nav>
+
+    <div class="nav-section-title">Reference</div>
+    <a class="nav-item" data-route="appendix-glossary"><span class="ic">▤</span> Glossary</a>
+    <a class="nav-item" data-route="appendix-shortcuts"><span class="ic">⌨</span> Keyboard Shortcuts</a>
+    <a class="nav-item" data-route="appendix-selftest"><span class="ic">?</span> Self-Test Questions</a>
+    <a class="nav-item" data-route="appendix-checklist"><span class="ic">☑</span> Capstone Checklist</a>
+  </aside>
+
+  <main id="main"></main>
+</div>
+
+<div id="lightbox">
+  <button class="lb-close" id="lb-close">✕</button>
+  <button class="lb-nav lb-prev" id="lb-prev">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav lb-next" id="lb-next">›</button>
+  <div class="lb-caption" id="lb-caption"></div>
+</div>
+
+</div><!-- /#app-shell -->
+
+<script id="site-data" type="application/json">{"front": {"welcome": "Welcome to your 5-week computer training programme! This handbook is yours to keep \u2014 bring it to every session, use it to follow along, and take it home to revise. Over the next five weeks you'll go from the very basics of using a computer to practical skills in Microsoft Office, Graphics Design, Databases, Artificial Intelligence, and Cybersecurity.\n\nEach day in this handbook lists: what you'll be able to do by the end of the session, the topics your instructor will cover, the in-class activity you'll complete, and anything to practice before the next session. Tick the checkbox at the end of each day once you feel confident with that day's skills \u2014 if you can't tick it yet, that's completely normal; ask your instructor for extra practice.", "achieve": ["Real, everyday confidence using a computer \u2014 not just theory.", "A personal portfolio of real work: a CV, a budget spreadsheet, a flyer and logo, a small database, and an AI-assisted document.", "Practical knowledge of AI tools that are useful right now.", "The skills to keep your accounts, devices, and data safe online."], "bring": ["This handbook and a notebook/pen.", "Your login details for any accounts you create (write these down somewhere safe, never inside this handbook).", "A willingness to practice \u2014 you learn computing by doing, not by watching."], "assess_intro": "Assessment is practical, not just written:", "assess_items": ["Daily in-class activities (informal, observed) \u2014 40%", "Weekly review sessions (end of Weeks 1\u20134) \u2014 30%", "Final Capstone Project & Presentation (Day 25) \u2014 30%"], "assess_cert": "A Certificate of Completion is awarded to students who complete the programme and the final capstone project.", "schedule": [["1", "Computer Basics & Fundamentals", "Hardware, operating systems, file management, typing, internet & email"], ["2", "Microsoft Office Suite", "Word, Excel, PowerPoint \u2014 core productivity skills"], ["3", "Graphics Design", "Design principles, Canva, CorelDRAW/Photoshop basics, branding project"], ["4", "Database Management & Introduction to AI", "MS Access fundamentals; practical AI tools and prompting"], ["5", "Cybersecurity & Capstone", "Online safety, threat awareness, review, final assessment & project"]]}, "weeks": [{"number": 1, "title": "Computer Basics & Fundamentals", "intro": "This week builds the foundation every other module depends on. Because the class is mixed-level, By the end of this week you'll be comfortable using a computer independently.", "days": [{"number": 1, "title": "Meet the Computer", "objectives": ["Identify the main hardware components of a desktop/laptop (CPU, monitor, keyboard, mouse, storage devices)", "Distinguish between hardware and software", "Power a computer on/off correctly and understand the desktop environment"], "topics": ["What is a computer? Input, process, output, storage", "Types of computers: desktop, laptop, tablet, smartphone", "Hardware tour: CPU/tower, monitor, keyboard, mouse, ports, cables", "Software vs hardware; operating system vs applications", "Safe power-on/shutdown procedure; avoiding hardware damage"], "activity": "Hands-on labelling: label a printed diagram of a computer, then point out each part on the real machine in front of you.", "practice": "Write down (in a notebook) five things at home or work that contain a computer chip (e.g., microwave, ATM, phone).", "slide_count": 12}, {"number": 2, "title": "The Operating System & File Management", "objectives": ["Navigate the Windows desktop, Start Menu, and Taskbar confidently", "Create, rename, move, copy, and delete files and folders", "Understand the concept of a file path and file extensions"], "topics": ["Desktop, icons, Taskbar, Start Menu, Notification area", "Windows Explorer / File Explorer navigation", "Creating folders; organising files logically", "Copy, cut, paste, rename, delete, and Recycle Bin", "Common file extensions (.docx, .xlsx, .pdf, .jpg, .mp4) and what opens them"], "activity": "Create a personal folder structure: 'My Training' > subfolders for each week. Practice moving sample files into the correct subfolders.", "practice": "Organise the files/photos already on your phone or PC into at least two labelled folders.", "slide_count": 9}, {"number": 3, "title": "Keyboard, Mouse & Typing Skills", "objectives": ["Use correct finger placement (home row) for typing", "Perform mouse actions accurately: click, double-click, right-click, drag-and-drop", "Type a short paragraph with reasonable speed and accuracy"], "topics": ["Keyboard layout: letters, numbers, function keys, special keys (Ctrl, Alt, Shift, Enter, Backspace, Space)", "Home row typing technique", "Mouse mechanics: single click, double-click, right-click menus, scroll wheel, drag-and-drop", "Common keyboard shortcuts: Ctrl+C, Ctrl+V, Ctrl+Z, Ctrl+S, Ctrl+P"], "activity": "Use a free typing tutor (e.g., TypingClub or Keybr, if internet available) for 20 minutes of guided practice, then a 5-minute timed typing test.", "practice": "Practice typing for 15 minutes using any typing tutor site or app.", "slide_count": 7}, {"number": 4, "title": "Internet & Email Fundamentals", "objectives": ["Open a browser and perform an effective web search", "Understand URLs, tabs, bookmarks, and downloads", "Create and use an email account (compose, send, attach, reply)"], "topics": ["What is the internet vs the World Wide Web vs a browser", "Using a search engine effectively (keywords, quotes for exact phrase)", "Browser basics: tabs, address bar, bookmarks, history, downloads", "Creating a Gmail/Outlook account", "Composing, sending, replying, forwarding, and attaching files to email", "Spotting an obviously suspicious email (preview of Week 5 cybersecurity)"], "activity": "Create a professional email address (firstname.lastname@gmail.com style) and send a test email to your instructor with a file attached.", "practice": "Send one email to a classmate and CC the instructor, practicing subject line and attachment.", "slide_count": 9}, {"number": 5, "title": "Review, Practice & Assessment", "objectives": ["Consolidate Week 1 skills", "Demonstrate independent navigation of files, typing, and email"], "topics": ["Recap: hardware, OS navigation, file management, typing, internet & email", "Q&A / troubleshooting common mistakes from the week"], "activity": "Short practical quiz (10 questions) + a hands-on task: create a folder, type a one-paragraph email inside a Word doc, save it in the folder, then email it to the instructor as an attachment.", "practice": "None \u2014 but extra typing practice is encouraged for anyone still hunting-and-pecking.", "slide_count": 11}]}, {"number": 2, "title": "Microsoft Office Suite", "intro": "This is usually the most immediately useful week for job-seekers. Every lesson is task-based ('produce this exact document') so you leave with finished, reusable work samples for a portfolio.", "days": [{"number": 6, "title": "Microsoft Word I: Document Basics", "objectives": ["Create, format, save, and print a basic document", "Apply font formatting, alignment, and paragraph spacing", "Use spell-check and basic page layout settings"], "topics": ["The Word interface: Ribbon, Quick Access Toolbar, status bar", "Typing, selecting text, cut/copy/paste", "Font formatting: bold, italics, underline, size, colour, highlighting", "Paragraph alignment, line spacing, bullets & numbering", "Page layout: margins, orientation, page size", "Saving in .docx and .pdf; naming conventions"], "activity": "Type and format a one-page personal profile / introduction letter using at least five formatting features covered today.", "practice": "Type a simple CV draft (content only, formatting to be refined on Day 7).", "slide_count": 9}, {"number": 7, "title": "Microsoft Word II: Tables, Styles & Mail Merge Basics", "objectives": ["Insert and format tables", "Apply built-in styles and headers/footers", "Understand the concept of mail merge for form letters"], "topics": ["Inserting/formatting tables: borders, shading, merging cells", "Headers, footers, and page numbers", "Styles (Heading 1/2, Normal) and why they matter for structure", "Inserting images, SmartArt basics", "Intro to Mail Merge: letter + Excel data source (conceptual demo)"], "activity": "Finalise your CV from Day 6 into a polished, table-based layout with a header containing your name and contact details.", "practice": "Print (or export to PDF) the finished CV; bring a copy for feedback.", "slide_count": 9}, {"number": 8, "title": "Microsoft Excel I: Spreadsheet Basics & Formulas", "objectives": ["Navigate rows, columns, and cells confidently", "Enter and format data", "Write basic formulas (addition, subtraction, SUM, AVERAGE)"], "topics": ["The Excel interface: cells, rows, columns, sheets, cell references (A1 style)", "Entering text, numbers, and dates; AutoFill/drag-fill", "Basic formulas: =A1+A2, SUM(), AVERAGE(), MIN(), MAX()", "Formatting cells: currency, percentage, borders, colour fills", "Freeze panes; sorting a simple list"], "activity": "Build a simple household or small-business monthly budget spreadsheet using SUM and AVERAGE.", "practice": "Add two more months of sample data to the budget sheet and recompute totals.", "slide_count": 9}, {"number": 9, "title": "Microsoft Excel II: Functions, Charts & Data Tools", "objectives": ["Use IF, COUNTIF, and simple lookup functions", "Create and format a chart from data", "Sort and filter a data table"], "topics": ["Logical functions: IF() with a simple condition", "COUNTIF() and basic VLOOKUP concept (shown, not mastered)", "Creating charts: bar, line, pie; chart titles and labels", "Sort & Filter for organising records", "Page setup for printing a spreadsheet neatly"], "activity": "Using the Day 8 budget sheet, add an IF formula ('Over Budget' / 'On Track') and create a pie chart of expenses by category.", "practice": "Bring one real-life scenario (e.g., attendance list, sales record) you'd like to build into a spreadsheet.", "slide_count": 11}, {"number": 10, "title": "Microsoft PowerPoint: Presentation Design", "objectives": ["Build a multi-slide presentation with consistent design", "Use layouts, transitions, and basic animations appropriately", "Deliver a short presentation confidently"], "topics": ["Slide layouts, themes, and the slide master (brief)", "Adding text, images, icons, and SmartArt", "Transitions vs animations \u2014 using them sparingly", "Presenter view and rehearsing timing", "Design do's and don'ts (text-heavy slides, tiny fonts, clashing colours)"], "activity": "Create a 5-slide presentation about yourself or a business idea and present it to the class in under 2 minutes.", "practice": "Refine the presentation using at least one image and one transition; save as .pptx and .pdf.", "slide_count": 9}]}, {"number": 3, "title": "Graphics Design", "intro": "Focus on one beginner-friendly tool (Canva) for speed and confidence, then get a light introduction to a professional tool (CorelDRAW or Photoshop) so you know the landscape without getting overwhelmed.", "days": [{"number": 11, "title": "Design Principles & Tool Landscape", "objectives": ["Explain core design principles: balance, contrast, alignment, hierarchy, colour theory", "Identify which tool suits which task (Canva vs CorelDRAW vs Photoshop)", "Set up and navigate a Canva account"], "topics": ["Elements of design: colour, typography, layout, imagery", "Principles: contrast, alignment, repetition, proximity, white space", "Overview: Canva (quick/social media), CorelDRAW (vector/print), Photoshop (photo editing)", "Canva interface tour: templates, elements, uploads, text, download options"], "activity": "Browse Canva templates and identify 3 examples of good contrast and 3 examples of poor alignment, then discuss as a group.", "practice": "Find one flyer/poster (online or physical) and note two things you would improve about its design.", "slide_count": 10}, {"number": 12, "title": "Canva in Practice: Flyers & Social Media Graphics", "objectives": ["Design a flyer using a template and custom edits", "Resize a design for multiple platforms (Instagram, WhatsApp status, print)", "Export designs correctly for print vs digital use"], "topics": ["Customising templates: fonts, colours, images, text boxes", "Uploading and using your own photos/logos", "Magic Resize / creating multiple format versions", "Export settings: PNG vs PDF vs JPEG; print-ready vs web-ready"], "activity": "Design an event flyer (e.g., for a fictional business launch) and export it in both a social-media-ready and a print-ready format.", "practice": "Design a simple business card using Canva for a fictional or real business.", "slide_count": 9}, {"number": 13, "title": "Introduction to CorelDRAW / Photoshop", "objectives": ["Understand the difference between vector and raster graphics", "Perform basic shape/text creation in CorelDRAW OR basic photo editing in Photoshop", "Use layers at a beginner level"], "topics": ["Vector vs raster: when to use which, and why it matters for scaling/print", "CorelDRAW basics: shapes, the Pick tool, fill/outline, text tool", "\u2014 OR \u2014 Photoshop basics: selection tools, cropping, brightness/contrast, layers", "Saving/exporting in the right format (.cdr/.pdf or .psd/.jpg/.png)"], "activity": "Guided step-by-step: recreate a simple logo mark (CorelDRAW) or retouch a sample photo (Photoshop), following the instructor live.", "practice": "Repeat the guided exercise once more independently to build muscle memory with the tool.", "slide_count": 12}, {"number": 14, "title": "Branding Project: Logo & Identity", "objectives": ["Design a simple logo reflecting a brand concept", "Apply a consistent colour palette and font pairing across materials"], "topics": ["What makes a logo effective: simplicity, memorability, scalability", "Choosing a colour palette (2\u20133 colours) and font pairing (max 2 fonts)", "Applying the logo across a flyer, business card, and social post for consistency"], "activity": "Design a logo for a fictional brand (assigned or self-chosen) and apply it consistently to the flyer and business card built earlier in the week.", "practice": "Prepare a one-line explanation of your design choices (colour, font, symbol) for tomorrow's mini critique.", "slide_count": 9}, {"number": 15, "title": "Portfolio Project & Peer Critique", "objectives": ["Assemble a small design portfolio (flyer, business card, logo)", "Give and receive constructive design feedback"], "topics": ["Recap of Week 3 principles and tools", "How to structure a simple design portfolio (even 3\u20134 pieces is enough to start)"], "activity": "Mini gallery walk: display your 3 design pieces (physically or on-screen); give one positive comment and one improvement suggestion to two classmates.", "practice": "Save all Week 3 work into your 'My Training' folder from Week 1, in a dedicated 'Design Portfolio' subfolder.", "slide_count": 9}]}, {"number": 4, "title": "Database Management & Introduction to AI", "intro": "Databases can feel abstract at first \u2014 anchor every concept in something tangible (a school register, a shop's stock list). The AI segment is hands-on and tool-based rather than theoretical.", "days": [{"number": 16, "title": "Database Concepts & Getting Started with MS Access", "objectives": ["Explain what a database is and why spreadsheets aren't always enough", "Understand tables, fields, and records", "Create a simple table in Microsoft Access"], "topics": ["What is a database? Real-world examples (school records, hospital patient lists, shop inventory)", "Key terms: table, field (column), record (row), primary key", "Opening Access; creating a new blank database", "Designing a simple table with appropriate field types (Text, Number, Date, Currency)"], "activity": "Design and create a 'Student Register' table with fields for Name, Age, Class, Phone Number, and Date Enrolled.", "practice": "List five other real-life examples (from your own life or work) that could be turned into a database table.", "slide_count": 9}, {"number": 17, "title": "Queries: Asking Questions of Your Data", "objectives": ["Enter and edit records in a table", "Build a simple query to filter and sort data", "Understand how queries answer specific questions"], "topics": ["Entering sample records (at least 10\u201315) into the Day 16 table", "Sorting and filtering records directly in the table view", "Creating a simple Select Query with criteria (e.g., 'Class = JSS1')", "Sorting query results and adding basic calculated fields (optional, light touch)"], "activity": "Write two queries: one to find all students in a specific class, another to find students enrolled after a certain date.", "practice": "Add five more records to the table and re-run yesterday's queries to confirm results update correctly.", "slide_count": 9}, {"number": 18, "title": "Forms & Reports", "objectives": ["Create a user-friendly data-entry form", "Generate a printable report from a table or query"], "topics": ["Why forms matter: easier, safer data entry than raw tables", "Auto-generating a form using Access's Form Wizard", "Auto-generating a report using the Report Wizard", "Light formatting of a report for printing (headers, grouping)"], "activity": "Generate a form to add three new students, then generate a printable class report grouped by Class.", "practice": "Write two sentences on how this 'Student Register' database could realistically be used in a school office.", "slide_count": 7}, {"number": 19, "title": "Introduction to Artificial Intelligence", "objectives": ["Explain what AI is (and isn't) in plain language", "Identify everyday tools that already use AI", "Understand what a large language model (like ChatGPT or Claude) can and cannot reliably do"], "topics": ["Demystifying AI: pattern recognition, not magic or 'thinking' like a human", "Everyday AI: recommendation feeds, voice assistants, spam filters, face unlock", "Introducing chat-based AI assistants (ChatGPT, Claude, Gemini, Copilot)", "Strengths (drafting, summarising, brainstorming, explaining) vs limits (can be wrong, needs fact-checking, no true understanding)", "Basic AI ethics: privacy, not pasting sensitive personal data, verifying important information"], "activity": "Watch a live demo of an AI assistant answering several sample questions \u2014 both a strong answer and a flawed one \u2014 and practice spotting the difference.", "practice": "Create a free account on one AI chat tool and ask it three questions about a topic you know well, to test the answers' accuracy.", "slide_count": 9}, {"number": 20, "title": "Practical AI: Prompting for Productivity", "objectives": ["Write clear, effective prompts to get useful AI output", "Use AI to support real Office/Design tasks from earlier weeks"], "topics": ["Anatomy of a good prompt: context, task, format, tone", "Using AI to draft a CV summary, an email, or social captions", "Using AI to brainstorm design ideas or generate an outline for a presentation", "Combining AI output with your own editing \u2014 never copy-paste blindly"], "activity": "Use an AI assistant to draft a cover letter for a job, then personally edit and correct it, comparing before/after.", "practice": "Save the AI-assisted cover letter into your portfolio folder; be ready to explain what you changed and why.", "slide_count": 9}]}, {"number": 5, "title": "Cybersecurity & Capstone Project", "intro": "This closing week protects everything you built in Weeks 1\u20134 (your accounts, documents, and new AI habits) and ends with a confidence-building final showcase.", "days": [{"number": 21, "title": "Cybersecurity Fundamentals", "objectives": ["Define common cyber threats in plain language", "Recognize the difference between a legitimate and a suspicious message/website"], "topics": ["What is cybersecurity and why it matters to ordinary users, not just companies", "Common threats: viruses, malware, phishing, scams, identity theft", "Anatomy of a phishing email/SMS: urgency, spelling errors, suspicious links, requests for money or codes", "Safe vs unsafe websites: checking for HTTPS, verifying a site before entering details"], "activity": "Review five sample messages (mix of genuine and fake) and identify which are phishing attempts and why.", "practice": "Check your email 'Spam/Junk' folder and identify one real example of a phishing attempt, without clicking anything.", "slide_count": 9}, {"number": 22, "title": "Passwords, Authentication & Data Protection", "objectives": ["Create and manage strong, unique passwords", "Understand two-factor authentication (2FA)", "Apply basic data-protection habits (backups, locking devices)"], "topics": ["What makes a password strong: length, mix of characters, avoiding personal info", "Password reuse risk and the basic idea of a password manager", "Two-factor authentication: what it is and how to turn it on", "Backing up important files (cloud storage, external drive)", "Physical security: locking screens, not sharing PINs/passwords"], "activity": "Update your email password to a stronger one (following the guidelines) and enable 2FA if not already active.", "practice": "Write down (on paper, not digitally) your new password reasoning technique \u2014 without writing the actual password \u2014 and back up one important file to cloud storage.", "slide_count": 9}, {"number": 23, "title": "Practical Safety: Devices, Networks & Social Engineering", "objectives": ["Configure basic antivirus/security settings", "Use public Wi-Fi more safely", "Recognize social engineering tactics beyond email (calls, fake tech support, impersonation)"], "topics": ["Antivirus/Windows Security basics: running a scan, keeping software updated", "Risks of public Wi-Fi; safer alternatives (mobile data, VPN concept)", "Social engineering: fake customer care calls, impersonation, 'urgent' requests for money or OTPs", "Safe app/download habits: only official app stores, checking permissions"], "activity": "Role-play in pairs: one person acts as a scammer attempting a social engineering trick, the other practices safely refusing and verifying \u2014 then swap roles.", "practice": "Share one cybersecurity tip learned this week with a family member or friend, and note their reaction.", "slide_count": 13}, {"number": 24, "title": "Full Course Review & Exam Preparation", "objectives": ["Consolidate all five weeks of learning", "Identify and close any remaining knowledge gaps before assessment"], "topics": ["Rapid recap across all modules: Basics, Office, Design, Database, AI, Cybersecurity", "Open Q&A and troubleshooting clinic", "Walkthrough of the final assessment/project expectations"], "activity": "Work through a comprehensive practice quiz (see Appendix C) covering all five weeks, then review the answers as a class.", "practice": "Finish preparing your capstone project (see Day 25) and gather all portfolio files into one folder.", "slide_count": 13}, {"number": 25, "title": "Capstone Project, Presentations & Certification", "objectives": ["Demonstrate integrated skills across all five modules in one project", "Present your work confidently to a group", "Receive course completion feedback/certificate"], "topics": ["Capstone brief: assemble a small 'personal brand' or 'small business starter pack' containing \u2014 a CV or business profile (Word), a budget or stock sheet (Excel), a flyer/logo (Design), a simple contact-list database (Access), one AI-assisted document, and a short note on how you'll keep your accounts secure", "Final presentations: each trainee presents their pack in 3\u20135 minutes"], "activity": "Capstone showcase and closing ceremony \u2014 instructor and peers give brief feedback; certificates of completion are issued.", "practice": "None \u2014 course complete. Keep practicing and revisit this manual as a reference.", "slide_count": 0}]}], "appendices": {"glossary": [{"term": "Hardware", "def": "The physical parts of a computer (monitor, keyboard, CPU, mouse)."}, {"term": "Software", "def": "Programs and applications that run on hardware (Windows, Word, a browser)."}, {"term": "Operating System (OS)", "def": "The core software that manages a computer's hardware and runs other programs (e.g., Windows, macOS)."}, {"term": "File / Folder", "def": "A file is a single item of data (a document, photo); a folder organises related files together."}, {"term": "Cloud Storage", "def": "Saving files on remote internet servers (e.g., Google Drive, OneDrive) instead of only on one device."}, {"term": "Formula / Function (Excel)", "def": "An instruction starting with '=' that calculates a value, e.g., =SUM(A1:A5)."}, {"term": "Database", "def": "An organised collection of related data, structured into tables of records and fields."}, {"term": "Query", "def": "A saved question asked of a database to filter, sort, or calculate specific information."}, {"term": "Artificial Intelligence (AI)", "def": "Computer systems that perform tasks (like answering questions or recognising images) by learning patterns from data, rather than following only fixed instructions."}, {"term": "Prompt", "def": "The instruction or question typed to an AI assistant to get a useful response."}, {"term": "Phishing", "def": "A scam message designed to trick someone into revealing personal or financial information."}, {"term": "Two-Factor Authentication (2FA)", "def": "A login security step requiring a second proof of identity beyond just a password (e.g., a code sent to your phone)."}, {"term": "Malware", "def": "Malicious software designed to damage, disrupt, or gain unauthorised access to a device."}, {"term": "Vector Graphic", "def": "An image built from mathematical shapes/lines that can be resized without losing quality (used in CorelDRAW)."}, {"term": "Raster Graphic", "def": "An image made of pixels that loses quality when enlarged too much (used in Photoshop, e.g., .jpg/.png photos)."}], "shortcuts": ["Ctrl + S \u2014 Save the current file", "Ctrl + C / Ctrl + V \u2014 Copy / Paste", "Ctrl + X \u2014 Cut", "Ctrl + Z / Ctrl + Y \u2014 Undo / Redo", "Ctrl + A \u2014 Select all", "Ctrl + P \u2014 Print", "Ctrl + F \u2014 Find text on the page/document", "Ctrl + N \u2014 Open a new document/window", "Alt + Tab \u2014 Switch between open windows", "Ctrl + Alt + Delete \u2014 Open security/task options (lock PC, task manager)", "Windows key + D \u2014 Show the desktop", "Windows key + E \u2014 Open File Explorer"], "self_test": [{"week": "Week 1 \u2014 Computer Basics", "questions": ["Name three examples of computer hardware.", "What is the difference between hardware and software?", "Show how to create a new folder and rename it.", "What keyboard shortcut saves a document?"]}, {"week": "Week 2 \u2014 Microsoft Office", "questions": ["Which Excel formula would you use to add up a column of numbers?", "Name two ways to format text in Word.", "What is the purpose of a header/footer in a document?", "What is the difference between a transition and an animation in PowerPoint?"]}, {"week": "Week 3 \u2014 Graphics Design", "questions": ["What is the difference between a vector and a raster image?", "Name two design principles you learned this week.", "Why is it important to export a design in the correct file format?"]}, {"week": "Week 4 \u2014 Database & AI", "questions": ["What is the difference between a table's field and a record?", "What does a query do?", "Give one example of how AI could help with a work task, and one risk to watch for."]}, {"week": "Week 5 \u2014 Cybersecurity", "questions": ["List three warning signs of a phishing email.", "What is two-factor authentication and why does it help?", "What should you do if a caller asks for your password or a one-time code?"]}], "checklist": ["A CV or personal/business profile (Word)", "A budget or stock spreadsheet with at least one formula and one chart (Excel)", "A flyer or logo you designed (Canva/CorelDRAW/Photoshop)", "A simple contact-list or records database (Access)", "One document you created with AI assistance, that you then edited yourself", "A short written note on how you will keep your own accounts and data secure", "A 3\u20135 minute presentation of your work, ready to deliver to the group"]}}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('site-data').textContent);
+const WEEK_COLORS = ['#3FDDC0','#F5B942','#FF8FB1','#8C9EFF','#FF6B6B'];
+
+/* ---------- progress storage (namespaced per signed-in user) ---------- */
+function storageKey(base){ return base + '__' + (CURRENT_USERNAME || 'anon'); }
+function getProgress(){ try{ return JSON.parse(localStorage.getItem(storageKey('compeller_learning_academy_progress_v1'))) || {}; }catch(e){ return {}; } }
+function setProgress(p){ localStorage.setItem(storageKey('compeller_learning_academy_progress_v1'), JSON.stringify(p)); }
+function isDayDone(n){ return !!getProgress()['day'+n]; }
+function toggleDayDone(n){ const p=getProgress(); p['day'+n] = !p['day'+n]; setProgress(p); renderProgress(); }
+
+function getChecklist(){ try{ return JSON.parse(localStorage.getItem(storageKey('compeller_learning_academy_checklist_v1'))) || {}; }catch(e){ return {}; } }
+function setChecklist(c){ localStorage.setItem(storageKey('compeller_learning_academy_checklist_v1'), JSON.stringify(c)); }
+
+function totalDays(){ return DATA.weeks.reduce((a,w)=>a+w.days.length,0); }
+function doneDays(){ const p=getProgress(); return Object.values(p).filter(Boolean).length; }
+function renderProgress(){
+  const t=totalDays(), d=doneDays();
+  const pct = t? Math.round(d/t*100):0;
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct+'%';
+  buildNav(); // refresh checkmarks
+  markActiveNav();
+}
+
+/* ---------- routing ---------- */
+function currentRoute(){
+  const h = location.hash.replace('#/','').trim();
+  return h || 'home';
+}
+window.addEventListener('hashchange', render);
+
+/* ---------- nav build ---------- */
+function buildNav(){
+  const nav = document.getElementById('navtree');
+  const openWeeks = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
+  let html = `<a class="nav-item" data-route="home"><span class="ic">⌂</span> Home</a>
+              <a class="nav-item" data-route="schedule"><span class="ic">▦</span> Schedule at a Glance</a>
+              <div class="nav-section-title">Programme</div>`;
+  DATA.weeks.forEach((w,i)=>{
+    const color = WEEK_COLORS[i%WEEK_COLORS.length];
+    const isOpen = openWeeks.includes(w.number) || location.hash.includes('week-'+w.number) || location.hash.includes('day-');
+    html += `<div class="week-group ${isOpen?'open':''}" data-week="${w.number}">
+      <div class="week-head" data-route="week-${w.number}">
+        <span class="week-dot" style="background:${color}"></span>
+        Week ${w.number}
+        <span class="week-num">${w.days.length} days</span>
+        <span class="week-chevron">▸</span>
+      </div>
+      <div class="week-days">`;
+    w.days.forEach(d=>{
+      const done = isDayDone(d.number);
+      html += `<a class="day-link" data-route="day-${d.number}">
+        <span class="day-check ${done?'done':''}"></span>
+        <span class="day-num">${String(d.number).padStart(2,'0')}</span>
+        <span>${d.title}</span>
+      </a>`;
+    });
+    html += `</div></div>`;
+  });
+  nav.innerHTML = html;
+
+  nav.querySelectorAll('[data-route]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      const route = el.getAttribute('data-route');
+      if(el.classList.contains('week-head')){
+        const grp = el.closest('.week-group');
+        grp.classList.toggle('open');
+        const wk = parseInt(grp.getAttribute('data-week'));
+        let ow = JSON.parse(sessionStorage.getItem('openWeeks')||'[]');
+        if(grp.classList.contains('open')){ if(!ow.includes(wk)) ow.push(wk); } else { ow = ow.filter(x=>x!==wk); }
+        sessionStorage.setItem('openWeeks', JSON.stringify(ow));
+      }
+      location.hash = '#/'+route;
+      closeSidebarMobile();
+    });
+  });
+}
+
+function markActiveNav(){
+  document.querySelectorAll('.nav-item, .day-link, .week-head').forEach(el=>el.classList.remove('active'));
+  const route = currentRoute();
+  const el = document.querySelector(`[data-route="${route}"]`);
+  if(el) el.classList.add('active');
+}
+
+/* ---------- mobile sidebar ---------- */
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+document.getElementById('hamburger').addEventListener('click', ()=>{
+  sidebar.classList.add('open'); overlay.classList.add('show');
+});
+overlay.addEventListener('click', closeSidebarMobile);
+function closeSidebarMobile(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+
+/* ---------- helpers ---------- */
+function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function findDay(num){
+  for(const w of DATA.weeks){ const d = w.days.find(x=>x.number===num); if(d) return {day:d, week:w}; }
+  return null;
+}
+function weekColor(weekNumber){ return WEEK_COLORS[(weekNumber-1)%WEEK_COLORS.length]; }
+function hexToRgba(hex,a){
+  const h = hex.replace('#','');
+  const r=parseInt(h.substring(0,2),16), g=parseInt(h.substring(2,4),16), b=parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ---------- slide lightbox ---------- */
+let lbState = { day: null, count: 0, index: 1 };
+function lbSlidePath(day, i){
+  const pad = n => String(n).padStart(2,'0');
+  return `assets/slides/day${pad(day)}/slide-${pad(i)}.jpg`;
+}
+function openLightbox(day, count, index){
+  lbState = { day, count, index };
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
+}
+function updateLightbox(){
+  document.getElementById('lb-img').src = lbSlidePath(lbState.day, lbState.index);
+  document.getElementById('lb-caption').textContent = `Day ${lbState.day} · Slide ${lbState.index} of ${lbState.count}`;
+}
+function lbNav(delta){
+  let i = lbState.index + delta;
+  if(i < 1) i = lbState.count;
+  if(i > lbState.count) i = 1;
+  lbState.index = i;
+  updateLightbox();
+}
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-prev').addEventListener('click', ()=>lbNav(-1));
+document.getElementById('lb-next').addEventListener('click', ()=>lbNav(1));
+document.getElementById('lightbox').addEventListener('click', (e)=>{
+  if(e.target.id === 'lightbox') closeLightbox();
+});
+document.addEventListener('keydown', (e)=>{
+  if(!document.getElementById('lightbox').classList.contains('show')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowLeft') lbNav(-1);
+  if(e.key === 'ArrowRight') lbNav(1);
+});
+
+/* ---------- page renderers ---------- */
+function renderHome(){
+  const f = DATA.front;
+  const t = totalDays();
+  main.innerHTML = `
+    <div class="hero">
+      <div class="hero-tag">7-Week Intensive · Computer Training Programme</div>
+      <h1>Training Manual</h1>
+      <p>${esc(f.welcome.split('\\n\\n')[0])}</p>
+      <div class="hero-meta">
+        <span><b>${t}</b> training days</span>
+        <span><b>5</b> modules</span>
+        <span><b>Cohort:</b> 3rd Aug – 4th Sep, 2026</span>
+      </div>
+      <a class="hero-cta" href="#/day-1">Start Day 1 →</a>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="n">${t}</div><div class="l">Total training days</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">Weeks / modules</div></div>
+      <div class="stat"><div class="n">1–2h</div><div class="l">Per session</div></div>
+      <div class="stat"><div class="n">1</div><div class="l">Capstone project</div></div>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">◆</span> Welcome</h2>
+      ${f.welcome.split('\\n\\n').map(p=>`<p style="color:var(--text-dim); font-size:14.5px; margin:0 0 12px;">${esc(p)}</p>`).join('')}
+    </div>
+
+    <div class="two-col section-gap">
+      <div class="card">
+        <h2 class="h"><span class="h-ic">✓</span> What You'll Achieve</h2>
+        <ul class="plain">${f.achieve.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      </div>
+      <div class="card">
+        <h2 class="h"><span class="h-ic">▣</span> What to Bring Each Day</h2>
+        <ul class="plain">${f.bring.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      </div>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">%</span> How You'll Be Assessed</h2>
+      <p style="color:var(--text-dim); font-size:14.5px; margin:0 0 14px;">${esc(f.assess_intro)}</p>
+      <ul class="plain">${f.assess_items.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+      <p style="color:var(--text-dim); font-size:13.5px; margin:14px 0 0; padding-top:14px; border-top:1px solid var(--line);">${esc(f.assess_cert)}</p>
+    </div>
+
+    <div class="card section-gap">
+      <h2 class="h"><span class="h-ic">▦</span> 5-Week Schedule at a Glance</h2>
+      ${scheduleTable()}
+    </div>
+
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function scheduleTable(){
+  const rows = DATA.front.schedule.map((r,i)=>{
+    const c = weekColor(i+1);
+    return `<tr>
+      <td class="wk" style="color:${c}">Week ${esc(r[0])}</td>
+      <td>${esc(r[1])}</td>
+      <td style="color:var(--text-dim)">${esc(r[2])}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="sched"><thead><tr><th>Week</th><th>Module</th><th>Focus</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderSchedule(){
+  main.innerHTML = `
+    <div class="eyebrow">Overview</div>
+    <h1 class="page-title">5-Week Schedule at a Glance</h1>
+    <p class="lede">The full programme, module by module. Click into any week from the sidebar for day-by-day detail.</p>
+    <div class="card">${scheduleTable()}</div>
+    <div class="day-grid section-gap">
+      ${DATA.weeks.map(w=>weekMiniCard(w)).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  main.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click', ()=>{ location.hash='#/'+el.getAttribute('data-goto'); }));
+}
+
+function weekMiniCard(w){
+  const c = weekColor(w.number);
+  return `<a class="day-card" data-goto="week-${w.number}" style="border-left:3px solid ${c}">
+    <div class="day-card-top">
+      <span class="day-badge" style="background:${c}">WEEK ${w.number}</span>
+      <h3>${esc(w.title)}</h3>
+    </div>
+    <p class="desc">${esc(w.intro)}</p>
+    <div class="day-card-meta"><span>${w.days.length} sessions</span><span>Days ${w.days[0].number}–${w.days[w.days.length-1].number}</span></div>
+  </a>`;
+}
+
+function renderWeek(num){
+  const w = DATA.weeks.find(x=>x.number===num);
+  if(!w){ renderHome(); return; }
+  const c = weekColor(num);
+  main.innerHTML = `
+    <div class="eyebrow">Week ${w.number} of 5 <span class="sep">/</span> Programme</div>
+    <div class="week-banner" style="background:linear-gradient(135deg, ${hexToRgba(c,0.16)}, var(--panel)); border-color:${hexToRgba(c,0.35)}">
+      <div class="wk-eyebrow" style="color:${c}">Week ${w.number}</div>
+      <h1>${esc(w.title)}</h1>
+      <p>${esc(w.intro)}</p>
+    </div>
+    <div class="day-grid">
+      ${w.days.map(d=>dayCard(d,w)).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  main.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click', ()=>{ location.hash='#/'+el.getAttribute('data-goto'); }));
+}
+
+function dayCard(d,w){
+  const c = weekColor(w.number);
+  const done = isDayDone(d.number);
+  return `<a class="day-card" data-goto="day-${d.number}" style="border-left:3px solid ${c}">
+    <div class="day-card-top">
+      <span class="day-badge" style="background:${c}">DAY ${d.number}</span>
+      <h3>${esc(d.title)}</h3>
+      ${done?'<span style="margin-left:auto; color:var(--teal); font-size:12px; font-family:var(--font-mono)">✓ done</span>':''}
+    </div>
+    <p class="desc">${esc((d.topics&&d.topics[0])||'')}</p>
+    <div class="day-card-meta"><span>${d.objectives.length} objectives</span><span>${d.topics.length} topics</span></div>
+  </a>`;
+}
+
+function renderDay(num){
+  const found = findDay(num);
+  if(!found){ renderHome(); return; }
+  const {day:d, week:w} = found;
+  const c = weekColor(w.number);
+  const done = isDayDone(d.number);
+
+  // prev/next across whole programme
+  const allDays = DATA.weeks.flatMap(w2=>w2.days.map(dd=>({...dd, weekNum:w2.number})));
+  const idx = allDays.findIndex(x=>x.number===d.number);
+  const prev = idx>0? allDays[idx-1]: null;
+  const next = idx<allDays.length-1? allDays[idx+1]: null;
+
+  const pad2 = n => String(n).padStart(2,'0');
+  const slideDir = `assets/slides/day${pad2(d.number)}`;
+  const slideCount = d.slide_count || 0;
+  const slideHTML = i => `assets/slides/day${pad2(d.number)}/slide-${pad2(i)}.jpg`;
+  const slidesHtml = slideCount? `
+    <h2 class="h section-gap"><span class="h-ic">▶</span> Slide Deck</h2>
+    <p style="color:var(--text-dim); font-size:13.5px; margin-top:-8px; margin-bottom:16px;">All ${slideCount} slides from this session — click any slide to zoom in.</p>
+    <div class="slide-gallery" id="slide-gallery" data-day="${d.number}" data-count="${slideCount}">
+      ${Array.from({length: slideCount}, (_,k)=>k+1).map(i=>`
+        <figure class="slide-frame" data-index="${i}">
+          <img src="${slideHTML(i)}" alt="Day ${d.number} slide ${i}" loading="lazy">
+          <figcaption>Slide ${i} of ${slideCount}</figcaption>
+        </figure>
+      `).join('')}
+    </div>
+  ` : '';
+
+  main.innerHTML = `
+    <div class="eyebrow"><a href="#/week-${w.number}" style="color:${c}; text-decoration:none;">Week ${w.number} — ${esc(w.title)}</a><span class="sep">/</span> Day ${d.number}</div>
+
+    <div class="day-hero" style="background:linear-gradient(135deg, ${hexToRgba(c,0.2)}, var(--panel)); border-color:${hexToRgba(c,0.35)}">
+      <div class="wk-eyebrow" style="color:${c}">Day ${d.number} · Week ${w.number}</div>
+      <h1>${esc(d.title)}</h1>
+      <div class="dur">⏱ Session length: 1–2 hours</div>
+      <div class="complete-toggle ${done?'done':''}" id="complete-btn" style="color:${c}">
+        <span class="box"></span> ${done? "Marked complete":"Mark this day complete"}
+      </div>
+    </div>
+
+    <h2 class="h"><span class="h-ic">✓</span> What You'll Be Able To Do</h2>
+    <ul class="obj-list">
+      ${d.objectives.map((o,i)=>`<li><span class="n">${i+1}</span><span>${esc(o)}</span></li>`).join('')}
+    </ul>
+
+    <h2 class="h section-gap"><span class="h-ic">☰</span> Topics Covered</h2>
+    <div class="topic-tags">${d.topics.map(t=>`<span class="topic-tag">${esc(t)}</span>`).join('')}</div>
+
+    <div class="two-col section-gap">
+      <div class="activity-card act">
+        <span class="tag">In-Class Activity</span>
+        <p>${esc(d.activity)}</p>
+      </div>
+      <div class="activity-card prac">
+        <span class="tag">Practice Before Next Session</span>
+        <p>${esc(d.practice || 'None — enjoy a well-earned break.')}</p>
+      </div>
+    </div>
+
+    ${slidesHtml}
+
+    <div class="day-nav">
+      ${prev? `<a class="prev" href="#/day-${prev.number}"><div class="lbl">← Day ${prev.number}</div>${esc(prev.title)}</a>` : '<div></div>'}
+      ${next? `<a class="next" href="#/day-${next.number}"><div class="lbl">Day ${next.number} →</div>${esc(next.title)}</a>` : '<div></div>'}
+    </div>
+
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+
+  document.getElementById('complete-btn').addEventListener('click', ()=>{
+    toggleDayDone(d.number);
+    renderDay(num);
+  });
+
+  if(slideCount){
+    document.querySelectorAll('#slide-gallery .slide-frame').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        openLightbox(d.number, slideCount, parseInt(el.getAttribute('data-index')));
+      });
+    });
+  }
+}
+
+function renderGlossary(){
+  const items = DATA.appendices.glossary;
+  main.innerHTML = `
+    <div class="eyebrow">Appendix A</div>
+    <h1 class="page-title">Glossary of Key Terms</h1>
+    <p class="lede">Quick definitions for words used throughout the programme.</p>
+    <input class="glossary-search" id="gloss-search" placeholder="Search terms… e.g. phishing, database, cloud">
+    <dl id="gloss-list"></dl>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  function draw(filter){
+    const f = (filter||'').toLowerCase();
+    const list = items.filter(it=> !f || it.term.toLowerCase().includes(f) || it.def.toLowerCase().includes(f));
+    document.getElementById('gloss-list').innerHTML = list.map(it=>`
+      <div class="gloss-item"><dt>${esc(it.term)}</dt><dd>${esc(it.def)}</dd></div>
+    `).join('') || `<p style="color:var(--text-dim)">No terms match “${esc(filter)}”.</p>`;
+  }
+  draw('');
+  document.getElementById('gloss-search').addEventListener('input', e=>draw(e.target.value));
+}
+
+function renderShortcuts(){
+  const items = DATA.appendices.shortcuts.map(s=>{
+    const [k, ...rest] = s.split(' — ');
+    return {k, what: rest.join(' — ')};
+  });
+  main.innerHTML = `
+    <div class="eyebrow">Appendix B</div>
+    <h1 class="page-title">Essential Keyboard Shortcuts</h1>
+    <p class="lede">Cheat sheet — keep this page open while you practice.</p>
+    <div class="shortcut-grid">
+      ${items.map(it=>`<div class="shortcut"><span class="kbd">${esc(it.k)}</span><span class="what">${esc(it.what)}</span></div>`).join('')}
+    </div>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function renderSelfTest(){
+  const groups = DATA.appendices.self_test;
+  main.innerHTML = `
+    <div class="eyebrow">Appendix C</div>
+    <h1 class="page-title">Self-Test Questions</h1>
+    <p class="lede">Use these to test yourself before each weekly review, or as revision before the final assessment.</p>
+    ${groups.map((g,i)=>`
+      <div class="test-week" style="border-left:3px solid ${weekColor(i+1)}; padding-left:16px;">
+        <h3 style="color:${weekColor(i+1)}">${esc(g.week)}</h3>
+        <ol>${g.questions.map(q=>`<li>${esc(q)}</li>`).join('')}</ol>
+      </div>
+    `).join('')}
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+}
+
+function renderChecklist(){
+  const items = DATA.appendices.checklist;
+  const state = getChecklist();
+  main.innerHTML = `
+    <div class="eyebrow">Appendix D</div>
+    <h1 class="page-title">My Capstone Project Checklist</h1>
+    <p class="lede">Your final capstone project (Day 25) should include all of the following. Check items off as you complete them — your progress is saved on this device.</p>
+    <ul class="checklist" id="checklist"></ul>
+    <footer class="pagefoot">Compeller Learning Academy — Training Manual</footer>
+  `;
+  function draw(){
+    const st = getChecklist();
+    document.getElementById('checklist').innerHTML = items.map((it,i)=>`
+      <li class="${st[i]?'done':''}" data-i="${i}"><span class="cbox"></span><span class="txt">${esc(it)}</span></li>
+    `).join('');
+    document.querySelectorAll('#checklist li').forEach(li=>{
+      li.addEventListener('click', ()=>{
+        const st2 = getChecklist();
+        const i = li.getAttribute('data-i');
+        st2[i] = !st2[i];
+        setChecklist(st2);
+        draw();
+      });
+    });
+  }
+  draw();
+}
+
+/* ---------- master render ---------- */
+const main = document.getElementById('main');
+function render(){
+  const route = currentRoute();
+  window.scrollTo(0,0);
+  if(route === 'home') renderHome();
+  else if(route === 'schedule') renderSchedule();
+  else if(route.startsWith('week-')) renderWeek(parseInt(route.split('-')[1]));
+  else if(route.startsWith('day-')) renderDay(parseInt(route.split('-')[1]));
+  else if(route === 'appendix-glossary') renderGlossary();
+  else if(route === 'appendix-shortcuts') renderShortcuts();
+  else if(route === 'appendix-selftest') renderSelfTest();
+  else if(route === 'appendix-checklist') renderChecklist();
+  else renderHome();
+  markActiveNav();
+}
+
+/* =========================================================
+   AUTH — username & password sign-in, powered by Supabase.
+   Fill in SUPABASE_URL and SUPABASE_ANON_KEY below (see
+   SETUP.md) before this login screen will work.
+   ========================================================= */
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const USERNAME_DOMAIN = '@compeller-learning-academy.local'; // internal only, students never see this
+
+let CURRENT_USERNAME = null;
+let supabaseClient = null;
+
+function usernameToEmail(u){ return u.trim().toLowerCase().replace(/\s+/g,'') + USERNAME_DOMAIN; }
+function emailToUsername(e){ return (e||'').split('@')[0]; }
+
+function showAuthError(msg){
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideAuthError(){
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+function showApp(user){
+  CURRENT_USERNAME = (user.user_metadata && user.user_metadata.username) || emailToUsername(user.email);
+  document.getElementById('sidebar-uname').textContent = CURRENT_USERNAME;
+  document.getElementById('sidebar-avatar').textContent = CURRENT_USERNAME.slice(0,1).toUpperCase();
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-shell').classList.add('show');
+  buildNav();
+  renderProgress();
+  render();
+}
+
+function showAuthScreen(){
+  CURRENT_USERNAME = null;
+  document.getElementById('app-shell').classList.remove('show');
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('auth-username').focus();
+}
+
+async function initAuth(){
+  if(!window.supabase || SUPABASE_URL.startsWith('YOUR_')){
+    showAuthError('This site is not connected to a login service yet. See SETUP.md.');
+    return;
+  }
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(session && session.user){ showApp(session.user); } else { showAuthScreen(); }
+
+  supabaseClient.auth.onAuthStateChange((event, session)=>{
+    if(event === 'SIGNED_OUT'){ showAuthScreen(); }
+  });
+
+  document.getElementById('auth-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    hideAuthError();
+    const username = document.getElementById('auth-username').value;
+    const password = document.getElementById('auth-password').value;
+    const btn = document.getElementById('auth-submit');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: usernameToEmail(username),
+      password
+    });
+    btn.disabled = false; btn.textContent = 'Sign in';
+    if(error){
+      showAuthError('Incorrect username or password. Please try again.');
+      return;
+    }
+    showApp(data.user);
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async ()=>{
+    await supabaseClient.auth.signOut();
+  });
+}
+
+initAuth();
+
+</script>
+</body>
+</html>
